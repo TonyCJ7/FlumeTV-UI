@@ -1,0 +1,113 @@
+---
+description: TypeScript/React formatting, imports, and general code style for this frontend repo
+globs: "**/*.{ts,tsx}"
+---
+
+# Code style (frontend)
+
+**Principles:** trivial helpers and extraction thresholds follow **`design-principles.mdc`** (YAGNI → DRY). Agent checklist: **`AGENTS.md`**.
+
+- Use **TypeScript** throughout; prefer **explicit** types on public exports and props.
+- **Prettier / ESLint:** follow `.prettierrc` and `eslint.config.mjs`; run `npm run format:check` and `npm run lint` before merge.
+- **Imports:** group in order — external packages (e.g. React, MUI), then internal paths (`@/` or relative), then type-only imports with `import type` where appropriate. Avoid circular imports between containers and design-system. **Folder boundaries:** import types from `@/types/…`, utils from `@/utils/…`, constants from `@/constants/…` — never via a “convenience” re-export in another folder (see **`module-folder-boundaries.mdc`**). **Dates/times:** use **date-fns** per **`date-fns-usage.mdc`** (shared helpers in **`utils/dateTime.utils.ts`**).
+- **Barrel exports (`index.ts`):** each `components/design-system/<ComponentName>/` folder and `components/providers/` expose a folder **`index.ts`** that re-exports the public API from `<ComponentName>.tsx` (or the provider module). Aggregate design-system primitives from **`@/components/design-system`**; providers from **`@/components/providers`**. Within the same component folder, import co-located **`*.styled.tsx`** with a **relative** path (e.g. `./Button.styled`) — **not** through the folder barrel (avoids cycles). Modules **inside** a barrel folder (e.g. `ThemeProviders.tsx` importing `ColorModeProvider`) use **relative** imports to sibling files, not the parent barrel.
+- **React imports:** do **not** use `import * as React`; import **named** hooks and APIs (**`useEffect`**, **`useState`**, etc.) only when needed, and **`import type { ReactNode }`** (or other types from **`react`**) separately. Prefer **default** imports for libraries that expose a single default (e.g. **`CssBaseline`** from MUI where applicable).
+- **Component signatures:** Declare props with **`[ComponentName]Props`** (**`type`**) above the component; see **`.cursor/rules/naming-conventions.mdc`** (**Component props**).
+- **Exports:** prefer **named** exports for everything you control — `export function`, `export const`, and `export type` — for components, hooks, utils, context modules, and barrels. **Exception:** Next.js App Router **must** use a **default** export in certain route files (`app/**/page.tsx`, `layout.tsx`, `error.tsx`, `not-found.tsx`, and similar); keep those defaults minimal (re-export a named component or inline only there).
+- **No** `any` unless justified with a short comment; prefer `unknown` + narrowing.
+- **Async:** use `async`/`await`; handle errors at boundaries (API client, hooks), not silent empty `catch`.
+- **Files:** one primary component or module per file when possible; split around **~300 lines**.
+- **Emotion styled:** use **`import styled from '@/utils/styled.utils'`** in **`*.styled.tsx`** so **`$…`** transient props are not forwarded to the DOM; do not import **`@emotion/styled`** directly unless there is a documented exception. **Styling split:** MUI **`sx`** or inline **`style`** only for **≤2 CSS properties**; **3+ properties**, pseudo-states, and nested selectors belong in co-located **`*.styled.tsx`** (see **`react-next-patterns.mdc`**).
+
+## No trivial one-liner helpers
+
+Do **not** add a named **`function`** (or exported helper) whose **entire body** is a single obvious check or expression — especially type-predicate wrappers that only return **`value === x`**, **`'field' in obj`**, or **`obj.field === true`**. Keep that logic **inline** at the call site so readers see the condition without jumping to another file.
+
+```typescript
+// ❌ BAD — extra indirection for a one-liner
+export function isPutConfigUnchanged(response: PutConfigResponseBody) {
+  return response.unchanged === true;
+}
+
+// ✅ GOOD — inline at the call site
+if (response.unchanged === true) {
+  return t('Configs.Toast_EditNoChanges');
+}
+```
+
+**Extract a helper only when** at least one of these holds:
+
+- The logic is **more than a trivial one-liner** (multiple conditions, mapping, formatting, validation).
+- The **same non-trivial block** is reused in **two or more** call sites (**DRY** — **`design-principles.mdc`**).
+- A single function returns a **small named outcome** (e.g. **`'unchanged' | 'nameOnly' | 'hashTransition'`**) that replaces **several** one-liner predicates — prefer that over three separate **`isX()`** exports.
+
+## Prefer nullish coalescing over `in` checks
+
+For **optional values and defaults**, use **`??`**, **`?.`**, and direct property reads — not **`'key' in obj`** guards when the property is already typed as optional or nullable.
+
+```typescript
+// ❌ BAD — noisy when the field is optional/nullable on the type
+const wait =
+  'estimatedWaitMs' in response ? response.estimatedWaitMs : null;
+const name = 'configName' in item ? item.configName : 'Untitled';
+
+// ✅ GOOD — readable defaults
+const wait = response.estimatedWaitMs ?? null;
+const name = item.configName ?? 'Untitled';
+```
+
+Use **`'key' in obj`** only when you must **narrow a discriminated union** and no simpler discriminator exists (e.g. **`response.unchanged === false && response.linkStatus != null`** before reading hash-transition-only fields). Even then, prefer checking a **known discriminator field** over inventing a one-liner predicate export.
+
+## Flat conditionals — early returns, not else-if chains or nesting
+
+Prefer **sequential `if` blocks with early `return`** (most specific first). Avoid **`else if` / `else`** ladders and **nested `if`** when each branch can stand alone.
+
+```typescript
+// ❌ BAD — else-if ladder
+if (response.unchanged === true) {
+  handleUnchanged();
+} else if (response.configNameUpdated === true) {
+  handleNameOnly();
+} else {
+  handleHashTransition();
+}
+
+// ✅ GOOD — flat early returns
+if (response.unchanged === true) {
+  return handleUnchanged();
+}
+
+if (response.configNameUpdated === true) {
+  return handleNameOnly();
+}
+
+return handleHashTransition();
+```
+
+```typescript
+// ❌ BAD — nested branches
+if (a) {
+  if (b) {
+    return 0;
+  }
+  if (c) {
+    return 1;
+  }
+  return 2;
+}
+
+// ✅ GOOD — guard clauses, most specific first
+if (a && b) {
+  return 0;
+}
+
+if (a && c) {
+  return 1;
+}
+
+if (a) {
+  return 2;
+}
+```
+
+Order checks from **most specific → least specific** so later branches assume earlier guards already failed.

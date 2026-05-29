@@ -1,0 +1,46 @@
+---
+description: YAGNI then DRY then SOLID — scope and structure for every change
+alwaysApply: true
+---
+
+# Design principles (priority order)
+
+Apply in order when adding or refactoring **any** TypeScript in this repo. Layer placement: **`module-folder-boundaries.mdc`**, UI layering: **`design-system-boundary.mdc`**, **`react-next-patterns.mdc`**.
+
+## 1. YAGNI — ship only what is needed now
+
+- Implement the **current** request or bug fix; no “future-proof” APIs, env flags, or abstractions without a caller today.
+- No speculative helpers, generic frameworks, or extra types “for later.”
+- One code path beats a strategy/factory until a **second real variant** exists.
+- Prefer extending an existing function or container over a new module when behavior stays in one domain.
+- **Docs:** update `docs/frontend-reference.md` only when **shipped** behavior changes — not for refactors or speculative notes (**`frontend-reference-maintenance.mdc`**).
+
+## 2. DRY — dedupe after repetition is real
+
+- Extract shared logic only when the **same rule** appears twice (or will on the next immediate change in the same PR).
+- Put shared code in the **lowest correct folder** — see import direction in **`docs/frontend-reference.md`** (Architecture): `types/` / `constants/` → `utils/` / `validation/` → `store/` / `hooks/` / `infra/` → `components/` → `containers/` → `app/`. Not a grab-bag helper at the call site.
+- Do not DRY **incidental** similarity (same shape, different meaning) — duplicated lines are OK if concepts differ.
+- Avoid “DRY” that couples unrelated features (shared mega-util, god container).
+
+## 3. SOLID — structure when complexity earns it
+
+- **S**ingle responsibility: one dominant effect per function/file — `app/` routes only; **`containers/`** wire screens; **`components/`** present; **`store/`** state/effects; **`utils/`** pure transforms; **`types/`** contracts (**`naming-conventions.mdc`**).
+- **O**pen/closed: extend via new functions or small modules, not boolean switches on `mode` / `type` unless the product already has those variants.
+- **L**iskov: substitutes honor the same contract (e.g. stable empty list shapes, consistent thunk fulfilled payloads).
+- **I**nterface segregation: narrow types in **`*.types.ts`**; pass only fields the caller needs into utils and components.
+- **D**ependency inversion: depend on folder boundaries and types, not concrete imports upward (e.g. no `utils/` → `containers/`, no `types/` → `utils/`).
+
+## Quick checks before finishing
+
+| Question | If “no” or “not yet” |
+| --- | --- |
+| Is there a caller or ticket for this abstraction? | Delete or inline (YAGNI). |
+| Is this the second copy of the same rule? | Extract once, one place (DRY). |
+| Does a new file/module have one clear reason to change? | Split or merge (SOLID-S). |
+| Did shipped user/API behavior change? | Update **`docs/frontend-reference.md`**. |
+
+When principles conflict: **YAGNI wins over DRY** (wait for the second use); **DRY wins over premature SOLID** (no interface per function).
+
+## Related rules
+
+Orchestration and verify checklist: **`AGENTS.md`**. Style and trivial helpers: **`code-style.mdc`**. Folder law: **`module-folder-boundaries.mdc`**.

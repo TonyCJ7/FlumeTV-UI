@@ -1,0 +1,10 @@
+---
+description: Match shipped UI; do not use temp/ or legacy trees as design reference
+globs: "**/*.{ts,tsx,css}"
+---
+
+# Greenfield design (frontend)
+
+- Match existing **`containers/`**, **`components/design-system/`**, **`components/core/`**, and **`theme/tokens.ts`**.
+- Do **not** use **`temp/`**, old branches, or prior UI trees as layout or visual reference.
+- New UI or modules: **YAGNI** — match shipped patterns only; no speculative variants (**`design-principles.mdc`**, **`AGENTS.md`**).

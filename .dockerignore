@@ -1,0 +1,27 @@
+node_modules
+.next
+.env
+.env.*
+.env.local
+*.log
+.git
+
+# Build / cache / artifacts
+out
+coverage
+*.tsbuildinfo
+
+# OS / local scratch
+.DS_Store
+temp
+
+# Dev-only (not needed to build or run)
+.cursor
+docs
+AGENTS.md
+README.md
+docker-compose.yml
+eslint.config.mjs
+knip.json
+.prettierrc
+.prettierignore

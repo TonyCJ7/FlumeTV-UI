@@ -1,0 +1,1 @@
+export { SegmentTabs } from "./SegmentTabs";

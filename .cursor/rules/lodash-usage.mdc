@@ -1,0 +1,9 @@
+---
+description: Lodash import style and when to use it
+globs: "**/*.{ts,tsx}"
+---
+
+# Lodash usage (frontend)
+
+- **Import shape (required):** default import from the **per-function** submodule, local name **`_<functionName>`** (underscore + same camelCase as lodash’s export). Pattern: `import _<name> from "lodash/<name>"`. Examples: `import _isNumber from "lodash/isNumber"`, `import _debounce from "lodash/debounce"`, `import _get from "lodash/get"`. Keeps bundles small; **no** `import _ from "lodash"`, `import * as _ from "lodash"`, and **no** `lodash-es` unless this rule is updated.
+- Prefer **lodash** (using the import shape above) over native `Array` / `Object` prototype chains for data manipulation—consistent APIs, null/undefined safety, and easier review. **Exception:** a single obvious native call is fine (e.g. `arr[0]`, `Object.keys` for a one-off) when adding lodash would not improve clarity.

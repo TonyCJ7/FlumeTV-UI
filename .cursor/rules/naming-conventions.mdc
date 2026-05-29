@@ -1,0 +1,48 @@
+---
+description: Naming for files, components, hooks, and modules
+globs: "**/*.{ts,tsx}"
+---
+
+# Naming conventions (frontend)
+
+- **Meaning, brevity, clarity:** Every name should be **grounded in behavior or purpose**—a reader should infer **what** it does or **what** it represents, not a vague label (`data`, `stuff`, `handleClick` on a page with many handlers). Keep names **short**, but do **not** sacrifice a clear link to real functionality. Use **simple English** and avoid long filler (`…ForUser`, `…HandlerThatDoes…`). **Product / business terms** (e.g. prefetch, manifest, Xtream, Stremio, EPG) stay as standard vocabulary.
+- **React components:** PascalCase (`ConfigCard.tsx`). When there is a single main component, the file name matches it; use a **named** export (see code-style: `export function ConfigCard` or `export const ConfigCard = …`), not a default export, except in Next.js route files that require a default per the framework.
+- **Hooks:** prefix `use` (e.g. `usePrefetchStatus.ts` in `hooks/`).
+
+## Folder = one kind of code (suffix matches folder)
+
+**Pick the folder first**, then name the file `<topic>.<suffix>.ts` where **`<suffix>` matches the folder**.
+
+**Strict boundaries (required):** see **`module-folder-boundaries.mdc`** — never define types in `utils/`, constants in `types/`, functions in `constants/`, or re-export types from the wrong folder. **Scope:** prefer extending existing names over new modules when one domain (**`design-principles.mdc`**).
+
+| Folder | File pattern | Contains | Must **not** contain |
+| ------ | ------------- | -------- | -------------------- |
+| **`types/`** | `*.types.ts` | `type`, `interface`; `declare module` augmentation (`emotion.types.ts`). Unions derived from constants may **`import { SOME_CONST }` only to use `typeof`** (e.g. `RestErrorCode` from `REST_ERROR_CODES`). | `const` exports, `function`, `class`, Zod |
+| **`constants/`** | `*.constants.ts` | Runtime **`const`** values (`REST_ERROR_CODES`, `MIN_PASSWORD_LENGTH`) | `type`, `interface`, `function`, `class` |
+| **`utils/`** | `*.utils.ts` | Functions: guards, parsers, **`to*RequestBody`** mappers, helpers | **`type`/`interface` exports**, Zod schemas, API DTO types, `const` catalogs |
+| **`validation/`** | `*.validation.ts` | Zod schemas + `z.infer<…>` **form** value types | `function`, API DTO `type`s |
+| **`infra/`** | `*.ts` (no required suffix) | App infrastructure: API client, env, i18n singleton, color-mode bootstrap, **`RestApiError`** class. **Not** named `lib/` — that collides with build **`lib/`** output in many toolchains. | Prefer not duplicating `utils/` or `types/` |
+
+- **No `types/index.ts`** — import explicit paths (`@/types/rest.types`).
+- **Barrels optional** in `constants/`, `validation/`, `utils/` (`index.ts` re-exports **same-folder** modules only — never re-export from `types/`).
+- **API DTOs** → `@/types/…`; **form validation** → `@/validation/…`; **submit mappers** → `@/utils/…`; **error codes** → `@/constants/…`; **axios / env / i18n** → `@/infra/…` (barrel **`@/infra/api`**).
+- **Containers vs design-system:** feature screens live under `containers/<Name>/`; reusable **domain-neutral** primitives under `components/design-system/`; **product adapters** (business enum → DS props) under `components/core/`. Do not name feature-specific things as if they were global DS components — see **`design-system-boundary.mdc`**.
+- **Styled components:** co-locate `ComponentName.styled.tsx` with `ComponentName.tsx` per project layout. Each component folder also has **`index.ts`** re-exporting the component (and public types); see **`code-style.mdc`** (barrel exports).
+- **Context files:** PascalCase stem, e.g. `AuthDialogContext.tsx` (not `auth.dialog.context.ts`).
+- **i18n string keys (`translations/<locale>/…json`):** Use **PascalCase** for every segment. **`i18next`** path = **`First.Second`** (and deeper JSON nesting as needed). After the **first** dot, the remainder can use **underscores** to express the patterns below (treat each underscore-separated run as **Category**, **SubSection**, or **Text** token as appropriate).
+
+  **Allowed shapes (compose as needed):**
+
+  | Pattern | Example |
+  | -------- | -------- |
+  | **`[Type].[Category1]`** | `Dialog.Action_Submit` |
+  | **`[Type].[Category1]_[Category2]`** | `Toast.State_Error_Dismissible` |
+  | **`[Section].[Category1]`** | `HomePage.Heading_Main` |
+  | **`[Section].[Category1]_[Category2]`** | `NotFound.Page_Title_NotFound` |
+  | **`[Section].[SubSection1]`** | `ConfigList.Card_StatusLabel` |
+  | **`[Section].[SubSection1]_[SubSection2]`** | `HomePage.Body_Scaffold_IntroSentence` |
+  | **`[TypeOrSection].[Text]`** | `Auth.Text_LegalDisclaimer` (short **Text** tail when no finer category) |
+  | **`Common.[Text]`** | `Common.ButtonLabel_TryAgain`, `Common.State_GenericErrorHeading` — **app-wide** reuse (actions, generic errors, **OK** / **Cancel**), not feature-specific copy |
+
+  **Rules:** Prefer **`Section`** (route, page, or owning surface) or **`Type`** (modal, toast, form, **API** error band) for **`First`**. Use **`Common`** only for strings shared across unrelated surfaces. **Do not** use **camelCase** or **snake_case** catalogue keys—the file is JSON; segments stay **PascalCase** (**`Install`**, **`ConfigCard`**, **`TryAgain`**). Call site: **`t('Section.SubSection_Key')`**.
+- **Component props:** If a component accepts **more than zero** props, define **`[ComponentName]Props`** (**`type`**) immediately **above** the component (**`RootErrorBoundary`** → **`RootErrorBoundaryProps`**) and use it in the function signature—not an inline **`{ … }`** on the parameter. Match the **exported component name**. Use **`Readonly<{ … }>`** when immutability is intended (e.g. layout **`children`**). Omit **`XxxProps`** only when there are **no** props.

@@ -1,0 +1,12 @@
+---
+description: Two layout modes — mobile below tablet, desktop at/above; single breakpoint
+globs: "**/*.{ts,tsx}"
+---
+
+# Responsive design (frontend)
+
+- **Two** product layouts: **mobile** (below tablet) and **desktop** (at/above).
+- **Tablet line:** **970px** — `theme/tokens.ts` **`layoutTokens.tabletBreakpointPx`**; MUI **`theme.breakpoints.values.md`** must be **970** (not the default **900px**).
+- **One** media query pair — e.g. `useMediaQuery(theme.breakpoints.down('md'))` or a shared `useIsMobile()` wrapper. Do **not** add extra layout breakpoints at `sm` or `lg` for product chrome.
+- **Mobile:** ~**44×44px** minimum tap targets. Critical info (queue position, etc.) must work without hover.
+- **Dialogs:** **`fullScreen`** below **`sm` (600px)**; **600–969px** uses fit-content paper (max **90vh**, body scroll). Shell layout switches at **`md` (970px)**.

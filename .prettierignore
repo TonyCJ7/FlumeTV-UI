@@ -1,0 +1,9 @@
+.next
+out
+node_modules
+coverage
+package-lock.json
+*.min.js
+temp
+README.md
+*.mdc

@@ -1,0 +1,24 @@
+/**
+ * Server-compatible `BASE_API_URL` parsing. Do not expose API secrets via `NEXT_PUBLIC_*`.
+ * When unset, returns `''` (API client calls fail until configured).
+ */
+
+function normalizeBaseApiUrl(raw: string): string {
+  const trimmed = raw.trim().replace(/\/+$/, "");
+  const url = new URL(trimmed);
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error(`BASE_API_URL must be http(s); got ${url.protocol}`);
+  }
+  return trimmed;
+}
+
+/**
+ * Validates `BASE_API_URL` when set. Empty string when omitted (allowed before API client use).
+ */
+export function getBaseApiUrl(): string {
+  const raw = process.env.BASE_API_URL;
+  if (raw === undefined || raw.trim() === "") {
+    return "";
+  }
+  return normalizeBaseApiUrl(raw);
+}

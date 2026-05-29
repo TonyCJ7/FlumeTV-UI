@@ -1,0 +1,39 @@
+---
+description: Keep design-system primitives domain-neutral and package-ready
+globs: "components/design-system/**/*.{ts,tsx},theme/**/*.{ts,tsx}"
+---
+
+# Design-system boundary (frontend)
+
+Presentation-only primitives in **`components/design-system/`** — no IPTV/config/auth domain in names or logic.
+
+## Layering
+
+| Layer | Path | Role |
+| ----- | ---- | ---- |
+| **Design system** | `components/design-system/` | Buttons, fields, shells, visual **tone** badges |
+| **Theme** | `theme/tokens.ts`, `createAppTheme.ts` | Slate palette, motion, breakpoints, **`AccentTone`** |
+| **Brand** | `theme/brand.ts` | Product-only (donate) — not imported from design-system |
+| **Core** | `components/core/` | Business kind → DS props (`SourceTypeBadge`, `DonateButton`) |
+| **Containers** | `containers/` | Screens, Redux, API |
+
+## Naming
+
+- DS: **`ToneBadge`**, **`FieldText`**, **`DialogShell`** — visual names only.
+- No product terms in DS: `SourceType`, `Xtream`, `Prefetch`, `Donate`, `Config`, etc.
+- Pass generic props (`tone`, `appearance`) from **core** / **containers**.
+
+## Imports (design-system)
+
+- **Allowed:** `@/utils/styled`, `@/theme/tokens`, `@mui/*`, `react`.
+- **Avoid:** `@/store`, `@/containers`, `@/infra/api`, `@/theme/brand`, product i18n.
+
+## New primitives
+
+1. API makes sense without IPTV context (**YAGNI** — add only when a caller exists today; **`design-principles.mdc`**).
+2. Product-specific UI → **core** wrapper.
+3. Export domain-neutral symbols from **`components/design-system/index.ts`**.
+
+## Related rules
+
+**`design-principles.mdc`**, **`react-next-patterns.mdc`**, **`AGENTS.md`**.

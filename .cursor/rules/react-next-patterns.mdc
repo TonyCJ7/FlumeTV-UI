@@ -1,0 +1,16 @@
+---
+description: Next.js App Router, MUI, Emotion, and structure
+globs: "**/*.{ts,tsx}"
+---
+
+# React / Next patterns (frontend)
+
+**Layering:** `app/` → `containers/` → `components/` → `store/` / `hooks/` / `utils/` — **`design-principles.mdc`**, **`module-folder-boundaries.mdc`**.
+
+- **App Router:** `app/` — route segments only; thin `page.tsx` → **container**. Use **`[PageName]Props`** when Next passes **`searchParams`** / **`params`**.
+- **MUI + Emotion:** `AppRouterCacheProvider` + `ThemeProvider` at root. **`CssBaseline`** + **`GlobalStyles`** for document rules — no **`app/globals.css`**. Styled: **`import styled from '@/utils/styled.utils'`** in **`*.styled.tsx`** (not **`@emotion/styled`**). **`sx`** / inline **`style`** only for **≤2** properties; **3+** properties and pseudo-states go in **`*.styled.tsx`**. Style-only props: **`$`** prefix (filtered automatically).
+- **i18n:** All user-facing copy in **`translations/<locale>/*.json`**; resolve in **containers** via **`useTranslation()`** / **`<Trans>`**. Pass **`t`** into validation and error mappers. Keys: **`naming-conventions.mdc`**. No product strings in **`utils/`**, **`store/`**, **`constants/`**, or **`components/design-system/`**.
+- **Design system:** Primitives in **`components/design-system/`**; product widgets in **`components/core/`** — **`design-system-boundary.mdc`**. Palette: **`theme/tokens.ts`**; donate brand: **`theme/brand.ts`**.
+- **Data:** Shared axios (`BASE_API_URL`, **`withCredentials: true`**). Branch errors on backend **`code`**.
+- **Forms:** **react-hook-form** + **zod**; match server rules and existing containers.
+- **Redux:** **`@reduxjs/toolkit`** — one slice module per domain under **`store/`**. Context only for truly local UI state.

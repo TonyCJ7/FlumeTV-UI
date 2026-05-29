@@ -1,0 +1,13 @@
+services:
+  frontend:
+    image: tonycj7/flumetv-ui:latest
+    container_name: flumetv-ui
+    restart: unless-stopped
+    ports:
+      - "7000:7000"
+    networks:
+      - frontend-network
+
+networks:
+  frontend-network:
+    driver: bridge

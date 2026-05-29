@@ -1,0 +1,31 @@
+---
+description: Use date-fns for all date and time operations in TypeScript
+globs: "**/*.{ts,tsx}"
+---
+
+# date-fns usage (frontend)
+
+- **Required:** Use **`date-fns`** for parsing, formatting, validating, comparing, and arithmetic on **dates and times** in **`*.ts`** / **`*.tsx`**. Do **not** use native **`Date`** helpers for product logic except as the value type **`date-fns`** returns (e.g. `parseISO`, `new Date()` passed into `formatISO`).
+- **Central helpers:** Shared formatters and “now as ISO” live in **`utils/dateTime.utils.ts`** (`nowIso`, `parseIsoDate`, `formatIsoMediumShort`, `formatMsDurationCompact`). Feature-specific wrappers (e.g. config card empty placeholder) stay in their domain **`*.utils.ts`** and delegate to **`dateTime.utils`**.
+- **Imports:** Named imports from **`date-fns`** only — e.g. `import { format, parseISO, isValid } from 'date-fns'`. **No** default import from **`date-fns`**.
+- **i18n:** When locale-aware display is required, pass a **`date-fns/locale`** to **`format`** / **`formatDistance`** (wire from **`i18next`** language in containers or formatters). Until then, default locale is acceptable for **`en`**.
+- **Not date-fns:** CSS transition **`duration`**, animation tokens, and unrelated **`timestamp`** field names on DTOs (still store ISO **strings**; produce them with **`nowIso()`** / **`formatISO`**).
+
+## Examples
+
+```typescript
+// ❌ BAD — native formatting in app code
+const d = new Date(iso);
+return d.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
+// ✅ GOOD
+import { formatIsoMediumShort } from '@/utils/dateTime.utils';
+return formatIsoMediumShort(iso, '—');
+
+// ❌ BAD — poll bookkeeping
+state.lastFetchedAt = new Date().toISOString();
+
+// ✅ GOOD
+import { nowIso } from '@/utils/dateTime.utils';
+state.lastFetchedAt = nowIso();
+```

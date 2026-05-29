@@ -1,0 +1,1 @@
+export { InstallPageContainer } from "./InstallPageContainer";

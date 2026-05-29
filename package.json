@@ -1,0 +1,61 @@
+{
+  "name": "flumetv-ui",
+  "version": "1.0.0",
+  "description": "FlumeTV UI — Next.js frontend (FlumeTV-UI)",
+  "homepage": "https://github.com/TonyCJ7/FlumeTV-UI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TonyCJ7/FlumeTV-UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TonyCJ7/FlumeTV-UI/issues"
+  },
+  "scripts": {
+    "dev": "next dev -p 7000",
+    "build": "next build",
+    "start": "node server.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@mui/icons-material": "^7.3.9",
+    "@mui/material": "^7.3.9",
+    "@mui/material-nextjs": "^7.3.9",
+    "@reduxjs/toolkit": "^2.12.0",
+    "axios": "^1.7.9",
+    "date-fns": "^4.2.1",
+    "i18next": "^26.2.0",
+    "lodash": "^4.18.1",
+    "next": "^16.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.71.2",
+    "react-i18next": "^17.0.8",
+    "react-redux": "^9.3.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.6",
+    "eslint-config-prettier": "^10.1.8",
+    "knip": "^5.88.1",
+    "prettier": "^3.8.1",
+    "prettier-plugin-embed": "^0.5.1",
+    "prettier-plugin-sql": "^0.20.0",
+    "typescript": "^5.7.2"
+  }
+}

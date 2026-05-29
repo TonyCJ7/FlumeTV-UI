@@ -1,0 +1,70 @@
+---
+description: Strict folder boundaries — types, utils, constants, validation, store; never mix across folders
+alwaysApply: true
+---
+
+# Module folder boundaries (strict)
+
+**One kind of code per folder.** If something belongs in `types/`, `utils/`, or `constants/`, it lives **only** there — never defined or re-exported from the “wrong” folder for convenience.
+
+## Where code belongs
+
+| Folder | File pattern | Put here | Never put here |
+| ------ | ------------- | -------- | -------------- |
+| **`types/`** | `*.types.ts` | `type`, `interface`; `declare module` augmentation | `const`, `function`, Zod, classes, i18n strings |
+| **`constants/`** | `*.constants.ts` | Runtime **`const`** / enums-as-const (`REST_ERROR_CODES`, poll intervals) | `type`, `interface`, `function`, Zod |
+| **`utils/`** | `*.utils.ts` | Pure **functions** (formatters, mappers, guards, `to*RequestBody`) | `type`/`interface` exports, `const` catalogs, Zod schemas |
+| **`validation/`** | `*.validation.ts` | Zod schemas + **`z.infer`** form value types | API DTO types, Redux, arbitrary helpers |
+| **`store/`** | slice/thunk/selector modules | Redux state, thunks, **selectors** | Shared DTO types (import from `types/`) |
+| **`hooks/`** | `use*.ts` | React hooks | Types/utils/constants (import them) |
+| **`infra/`** | infrastructure modules | API client, env, i18n instance, error **classes** wired to HTTP | Duplicating `types/` or `utils/` |
+| **`components/`** | UI only | Props **local** to one component; styled layout | Shared domain types, API DTOs, formatters used outside the tree |
+| **`containers/`** | screen wiring | `useTranslation`, dispatch, compose children | Shared types/utils (extract to `types/` / `utils/`) |
+| **`translations/`** | `*.json` | User-facing copy | TypeScript logic |
+
+## Hard rules
+
+1. **No cross-folder definitions** — e.g. do **not** add `export type Foo` in `utils/configCardDisplay.utils.ts`; add `types/configCard.types.ts` and import `@/types/configCard.types`.
+2. **No re-export smuggling** — do **not** `export type { X } from '@/types/…'` from `utils/` so callers can import one path. Callers import **`@/types/…`** directly.
+3. **Utils import types; types never import utils** — `types/*.types.ts` must not import from `utils/`, `store/`, or `components/`.
+4. **Constants import nothing from utils** — constants are leaf values; types may use `typeof SOME_CONST` with **`import type`** / value import only for `typeof`.
+5. **Store holds state, not shared shapes** — DTOs and display label **types** live in `types/`; slice-local state types may stay next to the slice if not reused.
+6. **When moving code** — move the file (or split), update imports; do not leave duplicate definitions in the old folder.
+
+## Examples
+
+```typescript
+// ❌ BAD — type in utils
+// utils/configCardDisplay.utils.ts
+export type ConfigCardDetailFormatters = Readonly<{ … }>;
+
+// ✅ GOOD
+// types/configCard.types.ts
+export type ConfigCardDetailFormatters = Readonly<{ … }>;
+// utils/configCardDisplay.utils.ts
+import type { ConfigCardDetailFormatters } from '@/types/configCard.types';
+```
+
+```typescript
+// ❌ BAD — constant in types
+// types/auth.types.ts
+export const MIN_PASSWORD_LENGTH = 8;
+
+// ✅ GOOD
+// constants/auth.constants.ts
+export const MIN_PASSWORD_LENGTH = 8;
+```
+
+```typescript
+// ❌ BAD — formatter in container
+// containers/ConfigPageContainer.tsx
+function formatQueuePosition(n: number | null) { … }
+
+// ✅ GOOD
+// utils/configCardFormat.utils.ts
+export function formatQueuePosition(…) { … }
+```
+
+## Related rules
+
+Scope and when to extract: **`design-principles.mdc`**. Agent workflow: **`AGENTS.md`**. File naming and suffixes: **`naming-conventions.mdc`**. Imports and barrels: **`code-style.mdc`**.

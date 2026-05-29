@@ -1,0 +1,39 @@
+---
+description: Keep docs/frontend-reference.md aligned with shipped frontend functionality after each chat
+alwaysApply: true
+---
+
+# Frontend reference maintenance
+
+[`docs/frontend-reference.md`](../docs/frontend-reference.md) is the **authoritative record of what this frontend does** — routes, user-facing features, Redux/API/SSE wiring, product surfaces, env vars, and deferred work. It is **not** a changelog.
+
+For API/server behavior, use sibling [FlumeTV-API/docs/backend-reference.md](../../FlumeTV-API/docs/backend-reference.md).
+
+**Scope (YAGNI):** document only **shipped** behavior changes — see **`design-principles.mdc`** and **`AGENTS.md`**.
+
+## Every chat — before you finish
+
+1. **Review** whether the work changed **shipped functionality** (what users can do, what the app calls, how navigation/auth flows behave).
+2. **Update** `docs/frontend-reference.md` when yes — same session, same PR-worthy change. Do not wait for the user to ask.
+3. **Skip** when the change is internal only (refactors, bug fixes, styling, copy tweaks) with **no** change to documented behavior.
+
+## Document (yes)
+
+- New or removed **routes**, pages, dialogs, or shell/nav behavior
+- New or removed **API endpoints**, thunks, or SSE hooks wired to UI
+- Auth, install, config, prefetch, or hash-op **product behavior** changes
+- New **env vars** that affect runtime behavior
+- Items moved between **shipped** and **Not wired / future work**
+
+## Do not document (no)
+
+- Bug fixes, regressions, or error-handling polish unless user-visible semantics change
+- Refactors, renames, file moves, or test/tooling-only changes
+- Implementation detail that does not change what the app **does** for users
+
+## How to edit
+
+- Match existing structure: overview tables, route map, Redux/API/SSE sections, product surfaces, deferred-work table.
+- Edit **only affected sections**; do not rewrite unrelated content.
+- Set **`Last updated:`** at the top to today’s date when you change the file.
+- Keep prose factual and concise — capability-focused, not commit-style notes.
