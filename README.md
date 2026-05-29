@@ -15,7 +15,7 @@
     <img src="https://img.shields.io/github/stars/TonyCJ7/FlumeTV-UI?style=for-the-badge&logo=github" alt="GitHub Stars">
   </a>
   <a href="https://github.com/TonyCJ7/FlumeTV-API">
-    <img src="https://img.shields.io/badge/FlumeTV-API-backend-0ea5e9?style=for-the-badge&logo=node.js&logoColor=white" alt="FlumeTV API">
+    <img src="https://img.shields.io/badge/FlumeTV--API-backend-0ea5e9?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="FlumeTV API">
   </a>
   <a href="https://hub.docker.com/r/tonycj7/flumetv-ui">
     <img src="https://img.shields.io/badge/Docker%20Hub-flumetv--ui-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub">
