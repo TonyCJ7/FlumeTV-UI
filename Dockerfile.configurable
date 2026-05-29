@@ -1,0 +1,22 @@
+# Configurable image — single-stage, full node_modules (~1.1 GB).
+# Runs `npm run build` on each container start so BASE_API_URL and PORT
+# can be changed via env + restart without rebuilding the image.
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+ARG BASE_API_URL=http://localhost:7001
+ENV BASE_API_URL=$BASE_API_URL
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+COPY . .
+
+ENV NODE_ENV=production
+ENV PORT=7000
+
+EXPOSE 7000
+
+CMD ["sh", "-c", "npm run build && npm run start"]

@@ -1,6 +1,6 @@
 # FlumeTV UI — frontend reference
 
-**Last updated:** 2026-05-29
+**Last updated:** 2026-05-30
 
 Authoritative context for the **FlumeTV-UI** repository: what the Next.js app does, how modules fit together, and how it integrates with **FlumeTV-API**. For quick start and scripts, see [README.md](../README.md). Server architecture and SSE wire formats: sibling [FlumeTV-API/docs/backend-reference.md](../../FlumeTV-API/docs/backend-reference.md). Full REST `code` catalog: [api-error-codes.md](../../FlumeTV-API/docs/api-error-codes.md).
 
@@ -306,7 +306,16 @@ Backend exposes **`GET /api/hashes/:hash/room/events`** (`status`, `progress`, `
 
 **Local dev:** copy `.env.example` → `.env.local`. **`PORT`** applies to Docker / `npm start` only; `npm run dev` uses port **7000** via the script.
 
-**Docker:** `docker compose` loads `.env`. The container runs `npm run build && npm start` on each start. `BASE_API_URL` is inlined during that in-container build (`next.config.ts` → `env.BASE_API_URL`). Users change `.env` and restart the container — no UI image rebuild needed. Set **`FRONTEND_ORIGIN`** on FlumeTV-API to the browser URL of this UI (CORS + session cookies).
+**Docker — two images:**
+
+| Tag | Dockerfile | Size | Runtime env |
+| --- | ---------- | ---- | ----------- |
+| **`latest`**, **`1.0.0`** | `Dockerfile` — multi-stage standalone, pre-built | ~190 MB | **`PORT`** only; **`BASE_API_URL`** fixed at **`http://localhost:7001`** |
+| **`configurable`**, **`1.0.0-configurable`** | `Dockerfile.configurable` — single-stage, full `node_modules` | ~1.1 GB | **`PORT`**, **`BASE_API_URL`** via `.env` + container restart (in-container `npm run build`) |
+
+Version pins match **`package.json`** `version`. Floating tags (`latest`, `configurable`) track the newest build of each variant.
+
+Set **`FRONTEND_ORIGIN`** on FlumeTV-API to the browser URL of this UI (CORS + session cookies).
 
 **Production (non-Docker):** run `npm run build` with `BASE_API_URL` set in the environment, then `npm start`.
 

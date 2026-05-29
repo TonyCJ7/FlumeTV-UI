@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" width="256" height="256">
+  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" style="width: 100%; max-width: 500px; height: auto; background: none;">
 </p>
 
 <h1 align="center">FlumeTV UI</h1>
@@ -18,23 +18,16 @@
     <img src="https://img.shields.io/badge/FlumeTV-API-backend-0ea5e9?style=for-the-badge&logo=node.js&logoColor=white" alt="FlumeTV API">
   </a>
   <a href="https://hub.docker.com/r/tonycj7/flumetv-ui">
-    <img src="https://img.shields.io/docker/pulls/tonycj7/flumetv-ui?style=for-the-badge&logo=docker" alt="Docker Pulls">
+    <img src="https://img.shields.io/badge/Docker%20Hub-flumetv--ui-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub">
   </a>
   <a href="https://github.com/TonyCJ7/FlumeTV-UI/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License MIT">
-  </a>
-  <a href="https://github.com/sponsors/TonyCJ7">
-    <img src="https://img.shields.io/github/sponsors/TonyCJ7?style=for-the-badge&logo=githubsponsors" alt="GitHub Sponsors">
   </a>
 </p>
 
 <p align="center">
   <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/Ko--fi-Support%20on%20Ko--fi-ff5e5b?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Support on Ko-fi">
-  </a>
-  &nbsp;
-  <a href="https://github.com/sponsors/TonyCJ7" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/GitHub-Sponsor%20me-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="Sponsor on GitHub">
   </a>
 </p>
 
@@ -45,6 +38,7 @@
 - [What is FlumeTV UI?](#-what-is-flumetv-ui)
 - [Key features](#-key-features)
 - [Getting started (full stack)](#-getting-started-full-stack)
+- [Docker images](#-docker-images)
 - [UI-only Docker](#-ui-only-docker)
 - [Local development](#-local-development)
 - [Environment variables](#-environment-variables)
@@ -60,7 +54,7 @@
 
 FlumeTV UI is the **official frontend** for **[FlumeTV](https://github.com/TonyCJ7/FlumeTV-API)** — a self-hostable **Stremio IPTV addon**. It talks to the sibling **[FlumeTV API](https://github.com/TonyCJ7/FlumeTV-API)** over REST and Server-Sent Events (SSE) using session cookies (`credentials: "include"`). By default the **UI** is at **port 7000** and the **API** at **port 7001**.
 
-**Docker image:** [`tonycj7/flumetv-ui:latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) on Docker Hub.
+**Docker images:** [`tonycj7/flumetv-ui:latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~190 MB, fast, default) and [`tonycj7/flumetv-ui:configurable`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~1.1 GB, full env overrides) on Docker Hub.
 
 > [!IMPORTANT]
 > **FlumeTV is a two-service stack.** This UI does not run standalone — you need the API (and PostgreSQL) running alongside it. Backend setup, REST routes, Stremio addon behavior, and the full server env catalog are documented in the **[FlumeTV API README](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md)**.
@@ -118,7 +112,10 @@ SESSION_JWT_SECRET=change_this_to_a_long_random_secret_for_sessions
 ADDON_SECRET_KEY=change_this_to_a_long_random_secret_for_addon_tokens
 ```
 
-Use long random strings for the two secrets. With default ports (**UI 7000**, **API 7001**), no other variables are required. Override **`FRONTEND_ORIGIN`**, **`BASE_API_URL`**, or port mappings only when users reach the stack at a non-default URL — see [Environment variables](#-environment-variables).
+Use long random strings for the two secrets. With default ports (**UI 7000**, **API 7001**), no other variables are required. Override **`FRONTEND_ORIGIN`** or port mappings only when users reach the stack at a non-default URL — see [Environment variables](#-environment-variables).
+
+> [!NOTE]
+> The default **`tonycj7/flumetv-ui:latest`** image bakes **`BASE_API_URL=http://localhost:7001`** at build time. That matches the compose setup above. If the browser must reach the API at a different origin, use the **[configurable image](#-docker-images)** instead.
 
 ### 2. Save `docker-compose.yml` and start
 
@@ -134,7 +131,7 @@ docker compose up -d
 | **UI** | **http://localhost:7000** |
 | **API** | **http://localhost:7001** |
 
-First UI start runs `next build` inside the container (~30–60s). PostgreSQL data persists in the **`postgres-data`** volume.
+First UI start is immediate with the default **`latest`** image (pre-built). PostgreSQL data persists in the **`postgres-data`** volume.
 
 > [!TIP]
 > For reverse proxies, set **`BASE_URL`** and **`TRUST_PROXY=1`** on the API side. See **[FlumeTV API — Environment variables](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-environment-variables)**.
@@ -206,9 +203,39 @@ networks:
 ```
 
 > [!NOTE]
-> To build the UI image locally instead of pulling from Docker Hub, replace the `frontend` service `image` line with `build: { context: ., dockerfile: Dockerfile }` and run `docker compose up -d --build`. Set **`BASE_API_URL`** in `.env` only when the browser reaches the API at a non-default origin.
+> To build the UI image locally instead of pulling from Docker Hub, replace the `frontend` service `image` line with `build: { context: ., dockerfile: Dockerfile }` and run `docker compose up -d --build`. Use **`Dockerfile.configurable`** and set **`BASE_API_URL`** in `.env` when the browser reaches the API at a non-default origin — see [Docker images](#-docker-images).
 
 Backend-only compose (API + Postgres without UI) lives in the **[FlumeTV-API README](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-getting-started)**.
+
+---
+
+## 🐳 Docker images
+
+Two published image variants; each has a **floating** tag and a **version-pinned** tag (matches [`package.json`](package.json) `version`, currently **1.0.0**):
+
+| Variant | Floating tag | Version-pinned tag | Size | Start time | Runtime env |
+| ------- | ------------ | ------------------ | ---- | ---------- | ----------- |
+| **Fast (default)** | `tonycj7/flumetv-ui:latest` | `tonycj7/flumetv-ui:1.0.0` | ~190 MB | Immediate | **`PORT`** only |
+| **Configurable** | `tonycj7/flumetv-ui:configurable` | `tonycj7/flumetv-ui:1.0.0-configurable` | ~1.1 GB | ~30–60s (builds on start) | **`PORT`**, **`BASE_API_URL`** |
+
+Pin a compose file to a release with e.g. `image: tonycj7/flumetv-ui:1.0.0`. Use **`latest`** / **`configurable`** to track the newest build of each variant.
+
+**Fast (`latest`, `1.0.0`)** — multi-stage build with Next.js standalone output. **`BASE_API_URL` is always `http://localhost:7001`** (baked at image build time). Use this for the standard localhost stack or when API and UI share the default ports.
+
+**Configurable (`configurable`, `1.0.0-configurable`)** — single-stage image with full `node_modules`. The container runs `npm run build && npm start` on each start, so you can change **`BASE_API_URL`** (and **`PORT`**) in `.env` and restart — no image rebuild.
+
+### Compose: configurable image
+
+Replace the `frontend` service `image` line:
+
+```yaml
+  frontend:
+    image: tonycj7/flumetv-ui:configurable
+    env_file:
+      - .env
+    environment:
+      BASE_API_URL: https://api.example.com
+```
 
 ---
 
@@ -224,7 +251,10 @@ docker compose pull
 docker compose up -d
 ```
 
-No `.env` is required when the API is at **`http://localhost:7001`** (the UI image default). Copy [`.env.example`](.env.example) to `.env` only to override **`PORT`** or **`BASE_API_URL`**.
+No `.env` is required when the API is at **`http://localhost:7001`** (the default **`latest`** image). Copy [`.env.example`](.env.example) to `.env` only to override **`PORT`**.
+
+> [!NOTE]
+> The default **`latest`** image cannot override **`BASE_API_URL`** at runtime — it is always **`http://localhost:7001`**. Use **`tonycj7/flumetv-ui:configurable`** when the browser reaches the API at a different origin; see [Docker images](#-docker-images).
 
 App: **http://localhost:7000**. Ensure the API sets **`FRONTEND_ORIGIN`** to match how users open this UI when not using the default **`http://localhost:7000`**.
 
@@ -249,7 +279,12 @@ App: **http://localhost:7000**. Change **`BASE_API_URL`** in `.env.local` when t
 
 ## 🔑 Environment variables
 
-Docker defaults are baked into the **[UI image](https://hub.docker.com/r/tonycj7/flumetv-ui)** (`PORT` **7000**, `BASE_API_URL` **`http://localhost:7001`**) and the **[API image](https://hub.docker.com/r/tonycj7/flumetv-api)** (`PORT` **7001**, `FRONTEND_ORIGIN` **`http://localhost:7000`**). Override via `.env` only when your deployment differs.
+Docker defaults for the **[API image](https://hub.docker.com/r/tonycj7/flumetv-api)** are `PORT` **7001** and `FRONTEND_ORIGIN` **`http://localhost:7000`**. UI behavior depends on which image you run — see [Docker images](#-docker-images).
+
+| UI image | `PORT` | `BASE_API_URL` |
+| -------- | ------ | -------------- |
+| **`latest`** (fast, default) | Override at runtime (default **7000**) | Fixed **`http://localhost:7001`** |
+| **`configurable`** | Override at runtime (default **7000**) | Override via `.env` + container restart |
 
 ### Full stack (minimum)
 
@@ -262,13 +297,13 @@ For the **full list** of environment variables (HTTP, CORS, prefetch tuning, pro
 
 ### UI overrides (optional)
 
-| Variable | Default | Set when |
-| -------- | ------- | -------- |
-| `PORT` | `7000` | UI listens on a different host port |
-| `BASE_API_URL` | `http://localhost:7001` | Browser reaches the API at a different origin (not a Docker-internal hostname) |
-| `DEBUG_MODE` | off | Reserved for future diagnostics |
+| Variable | Default | `latest` image | `configurable` image |
+| -------- | ------- | -------------- | -------------------- |
+| `PORT` | `7000` | Set when UI listens on a different port | Same |
+| `BASE_API_URL` | `http://localhost:7001` | **Fixed** — cannot change at runtime | Set when browser reaches API at a different origin; change `.env` and **restart** |
+| `DEBUG_MODE` | off | Reserved | Reserved |
 
-`BASE_API_URL` is inlined during the container’s `npm run build`. Change `.env` and **restart** the UI container to apply a new value.
+On the **`configurable`** image, `BASE_API_URL` is inlined during the container’s `npm run build`. Change `.env` and **restart** the UI container to apply a new value.
 
 ### API overrides the UI cares about
 
@@ -330,10 +365,6 @@ FlumeTV is developed and maintained for self-hosters. If you find it useful, ple
 <p align="center">
   <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
     <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/kofi-logomark.png" alt="Ko-fi" height="40" />
-  </a>
-  &nbsp;&nbsp;
-  <a href="https://github.com/sponsors/TonyCJ7" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/github-sponsors.svg" alt="GitHub Sponsors" height="40" />
   </a>
 </p>
 
