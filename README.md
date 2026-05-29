@@ -1,5 +1,5 @@
-<p align="center">
-  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" style="width: 100%; max-width: 500px; height: auto; background: none;">
+<p align="center" style="max-width: 500px; margin: 0 auto;">
+  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" style="width: 100%; height: auto; background: none;">
 </p>
 
 <h1 align="center">FlumeTV UI</h1>
@@ -25,9 +25,11 @@
   </a>
 </p>
 
+## ☕ Sponsor
+
 <p align="center">
   <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
-    <img src="https://img.shields.io/badge/Ko--fi-Support%20on%20Ko--fi-ff5e5b?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Support on Ko-fi">
+    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/kofi-donate-button.png" alt="Donate on Ko-fi" />
   </a>
 </p>
 
