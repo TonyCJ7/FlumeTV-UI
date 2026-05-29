@@ -21,7 +21,7 @@
     <img src="https://img.shields.io/badge/Docker%20Hub-flumetv--ui-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub">
   </a>
   <a href="https://github.com/TonyCJ7/FlumeTV-UI/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License MIT">
+    <img src="https://img.shields.io/badge/license-CC--BY--NC--4.0-lightgrey?style=for-the-badge" alt="License CC-BY-NC-4.0">
   </a>
 </p>
 
@@ -374,4 +374,8 @@ FlumeTV is developed and maintained for self-hosters. If you find it useful, ple
 
 ## License
 
-MIT
+This project is licensed under [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
+
+You may fork, use, and modify this software for **non-commercial** purposes (for example, personal or hobby use), provided you give appropriate credit. **Commercial use is not permitted** without separate permission.
+
+See [LICENSE](LICENSE) for the full legal text.
