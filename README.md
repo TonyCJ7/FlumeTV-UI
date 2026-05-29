@@ -1,5 +1,5 @@
 <p align="center" style="max-width: 500px; margin: 0 auto;">
-  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" style="width: 100%; height: auto; background: none;">
+  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/public/assets/flumeMix.png" width="400" >
 </p>
 
 <h1 align="center">FlumeTV UI</h1>
