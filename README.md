@@ -25,7 +25,7 @@
   </a>
 </p>
 
-## ☕ Sponsor
+## ☕ Donate
 
 <p align="center">
   <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
