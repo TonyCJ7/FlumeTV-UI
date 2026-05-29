@@ -29,7 +29,7 @@
 
 <p align="center">
   <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/kofi-donate-button.png" alt="Donate on Ko-fi" />
+    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/kofi-donate-button.png" alt="Donate on Ko-fi" width="150"/>
   </a>
 </p>
 
