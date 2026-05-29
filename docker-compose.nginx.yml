@@ -1,0 +1,36 @@
+# Optional overlay — single host/port via nginx.
+# Usage (from a directory with docker-compose.yml, .env, and nginx.conf):
+#   cp /path/to/FlumeTV-UI/docker/nginx/nginx.conf ./nginx.conf
+#   docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+#
+# Requires tonycj7/flumetv-ui:configurable and PUBLIC_URL in .env — see README.
+
+services:
+  api:
+    ports: !reset []
+    environment:
+      TRUST_PROXY: "1"
+      BASE_URL: ${PUBLIC_URL:-http://localhost:7000}
+      FRONTEND_ORIGIN: ${PUBLIC_URL:-http://localhost:7000}
+
+  frontend:
+    image: tonycj7/flumetv-ui:configurable
+    ports: !reset []
+    env_file:
+      - .env
+    environment:
+      BASE_API_URL: ${PUBLIC_URL:-http://localhost:7000}
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: flumetv-nginx
+    restart: unless-stopped
+    depends_on:
+      - api
+      - frontend
+    ports:
+      - "${PUBLIC_PORT:-7000}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - flumetv-network
