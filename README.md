@@ -46,7 +46,8 @@
 - [Environment variables](#-environment-variables)
 - [Routes](#-routes)
 - [Scripts](#-scripts)
-- [Further reading](#-further-reading)
+- [Further reading](#further-reading)
+- [Contributing](#-contributing)
 - [Support the project](#-support-the-project)
 - [License](#license)
 
@@ -356,12 +357,78 @@ Auth is a **modal** (not a route). Cold visits show login/create-account over a 
 
 ---
 
+## 🤝 Contributing
+
+Thanks for helping improve FlumeTV. This UI is one half of the stack — pair it with **[FlumeTV-API](https://github.com/TonyCJ7/FlumeTV-API)** when testing end-to-end behavior.
+
+### Pull requests
+
+1. **Branch from `main`** using a short, descriptive kebab-case name:
+   - `feature/<topic>` — new behavior or UI (e.g. `feature/config-card-actions`)
+   - `fix/<topic>` — bug fixes (e.g. `fix/auth-dialog-focus`)
+   - `docs/<topic>` — documentation only
+2. **Keep changes modular** — one logical concern per PR. Split unrelated fixes or features so each is easy to review and revert.
+3. **Run checks before you push** — pre-commit hooks run formatting and lint. **Do not** use `git commit --no-verify`; fix issues instead:
+
+   ```bash
+   npm run format:check && npm run lint && npm run typecheck
+   ```
+
+   Run `npm run build` when you touch app wiring, routes, or env handling.
+
+4. **Open a PR with a clear description** — summarize what changed and why. For **bug fixes**, include **steps to reproduce** the issue before your change. For **UI changes**, attach **before/after screenshots** (or a short screen recording) so reviewers can see layout and responsive behavior.
+
+5. **Update [docs/frontend-reference.md](docs/frontend-reference.md)** only when **shipped user-facing behavior** changes (new routes, API wiring, env vars, etc.).
+
+### Code style guidelines
+
+Match existing patterns in the layer you edit. Full agent rules live in [`.cursor/rules/`](.cursor/rules/) and [AGENTS.md](AGENTS.md); the essentials:
+
+| Topic | Guideline |
+| ----- | --------- |
+| **Language** | TypeScript throughout; explicit types on public exports and component props (`[ComponentName]Props`). |
+| **Formatting** | Prettier (`.prettierrc`) and ESLint (`eslint.config.mjs`); run `npm run format:check` and `npm run lint`. |
+| **Folder boundaries** | One kind of code per folder — `types/` for interfaces, `utils/` for pure functions, `constants/` for runtime consts, `validation/` for Zod, `store/` for Redux, `containers/` for screen wiring, `components/design-system/` for domain-neutral UI, `components/core/` for product widgets, `translations/` for user-facing copy. |
+| **Imports** | External packages first, then `@/` internal paths; use `import type` where appropriate. Import types from `@/types/…`, not via re-exports in other folders. |
+| **Components** | Named exports; co-locate **`*.styled.tsx`** when styling needs three or more properties, pseudo-states, or nested selectors. Use `@/utils/styled.utils` in styled files. |
+| **Logic** | Prefer early returns over `else if` chains; avoid trivial one-liner helper exports — keep simple checks inline unless reused. |
+| **Scope** | Smallest change that solves the request (YAGNI) — no speculative abstractions, env flags, or types without a caller today. |
+
+**Verify before opening a PR:**
+
+```bash
+npm run format:check && npm run lint && npm run typecheck && npm run build
+```
+
+Optional: `npm run knip` to catch unused exports.
+
+### Reporting issues
+
+Open a [GitHub issue](https://github.com/TonyCJ7/FlumeTV-UI/issues) with as much context as you can. The more complete the report, the faster we can reproduce and fix it.
+
+Include:
+
+1. **What happened vs what you expected** — concise summary of the bug or gap.
+2. **Steps to reproduce** — numbered steps from a clean state (login, add source, refetch, etc.).
+3. **Environment**
+   - **Node.js version** (for local dev — e.g. `node -v`; requires **≥ 20.9**)
+   - **Hosting method** — Docker Compose, bare metal, serverless, or other
+   - **UI image** (if Docker) — `latest` vs `configurable`, and relevant env (`BASE_API_URL`, `FRONTEND_ORIGIN`)
+4. **Source details** (for sync/config/catalog issues)
+   - **Provider type** — direct M3U, Xtream JSON API, or Xtream M3U
+   - **Sample data** — sanitized playlist URL, or approximate **line/channel count** (never post passwords, tokens, or full credentials)
+5. **Logs** — with **`DEBUG_MODE=true`** on the **[FlumeTV-API](https://github.com/TonyCJ7/FlumeTV-API)** side when backend/sync behavior is involved. **Scrub** session tokens, panel passwords, and API keys before pasting.
+
+For UI-only visual bugs, screenshots or a short screen recording are especially helpful.
+
+---
+
 ## ❤️ Support the project
 
 FlumeTV is developed and maintained for self-hosters. If you find it useful, please consider:
 
 - ⭐ **[Star the repository](https://github.com/TonyCJ7/FlumeTV-UI)** on GitHub.
-- 🤝 **Contribute** — Report issues, suggest features, or submit pull requests.
+- 🤝 **[Contribute](#-contributing)** — Report issues or submit pull requests.
 - ☕ **Donate**:
 
 <p align="center">
