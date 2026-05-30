@@ -230,32 +230,9 @@ curl -fsSL -o nginx.conf \
   https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/main/docker/nginx/nginx.conf
 ```
 
-### 3. Use the nginx compose file and start
+### 3. Save `docker-compose.yml`
 
-Save the compose block below as `docker-compose.yml` (replaces the default full-stack file), then:
-
-```bash
-docker compose pull
-docker compose up -d
-```
-
-
-| Service              | URL                                                                           |
-| -------------------- | ----------------------------------------------------------------------------- |
-| **UI + API + addon** | `**PUBLIC_URL`** (default **[http://localhost:7000](http://localhost:7000)**) |
-
-
-API and UI are **not** published on separate host ports — only nginx is exposed. First UI start may take ~30–60s while the configurable image builds.
-
-**Overlay instead of replacing compose:** if you already use the [default full-stack compose](#compose-file-copy-paste), copy `[docker-compose.nginx.yml](docker-compose.nginx.yml)` beside it and run:
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
-```
-
-Requires Docker Compose **2.23+** (for `ports: !reset` in the overlay).
-
-### Compose file with nginx (copy-paste)
+Save the compose block below as `docker-compose.yml` in the same directory as your `.env` and `nginx.conf` (replaces the [default full-stack compose](#compose-file-copy-paste) when you want single-host routing):
 
 ```yaml
 services:
@@ -318,7 +295,7 @@ services:
       - api
       - frontend
     ports:
-      - "${PUBLIC_PORT:-6000}:80"
+      - "${PUBLIC_PORT:-7000}:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
@@ -332,8 +309,32 @@ networks:
     driver: bridge
 ```
 
+**Overlay instead of replacing compose:** if you already use the [default full-stack compose](#compose-file-copy-paste), copy [`docker-compose.nginx.yml`](docker-compose.nginx.yml) beside it instead of the file above. Requires Docker Compose **2.23+** (for `ports: !reset` in the overlay).
+
+### 4. Pull images and start
+
+After steps 1–3 (`.env`, `nginx.conf`, and compose file) are in place:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+If you use the overlay, run:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml pull
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+```
+
+| Service | URL |
+| ------- | --- |
+| **UI + API + addon** | **`PUBLIC_URL`** (default **http://localhost:7000**) |
+
+API and UI are **not** published on separate host ports — only nginx is exposed. First UI start may take ~30–60s while the configurable image builds.
+
 > [!TIP]
-> For an external reverse proxy (Caddy, Traefik, Cloudflare) in front of this stack, keep `**TRUST_PROXY=1**` and `**BASE_URL**` on the API aligned with `**PUBLIC_URL**`. See **[FlumeTV API — Environment variables](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-environment-variables)**.
+> For an external reverse proxy (Caddy, Traefik, Cloudflare) in front of this stack, keep **`TRUST_PROXY=1`** and **`BASE_URL`** on the API aligned with **`PUBLIC_URL`**. See **[FlumeTV API — Environment variables](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-environment-variables)**.
 
 ---
 

@@ -7,7 +7,6 @@ import { useDialogFullScreen } from "@/hooks/useLayoutMode";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
   CheckField,
   DialogShell,
   FeedbackBanner,
