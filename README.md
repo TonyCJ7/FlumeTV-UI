@@ -532,7 +532,7 @@ Thanks for helping improve FlumeTV. This UI is one half of the stack — pair it
   - `fix/<topic>` — bug fixes (e.g. `fix/auth-dialog-focus`)
   - `docs/<topic>` — documentation only
 2. **Keep changes modular** — one logical concern per PR. Split unrelated fixes or features so each is easy to review and revert.
-3. **Run checks before you push** — pre-commit hooks run formatting and lint. **Do not** use `git commit --no-verify`; fix issues instead:
+3. **Run checks before you push** — Husky runs **lint-staged** on commit (ESLint + Prettier on staged files). **Do not** use `git commit --no-verify`; fix issues instead. Before opening a PR, also run:
   ```bash
    npm run format:check && npm run lint && npm run typecheck
   ```
