@@ -1,0 +1,25 @@
+# Secrets — .gitignore alone does not block Agent/Tab access
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Lockfile (large; low signal for AI context)
+package-lock.json
+
+# Logs and OS noise
+*.log
+npm-debug.log*
+.DS_Store
+
+# Legacy / scratch (not design reference — see greenfield-design.mdc)
+temp/
+
+# Binary assets (images are not useful for code context)
+public/assets/
