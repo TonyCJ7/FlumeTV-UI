@@ -1,15 +1,37 @@
+<p align="center" style="max-width: 500px; margin: 0 auto;">
+  <img alt="FlumeTV Logo" src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/flumeMix.png" width="400" >
+</p>
 
+<h1 align="center">FlumeTV UI</h1>
 
-# FlumeTV UI
+<p align="center">
+  <strong>Official management panel for the FlumeTV Stremio IPTV addon.</strong>
+  <br />
+  Register, link Direct M3U and Xtream sources, monitor live sync status, stream prefetch logs, and install the Stremio addon — paired with the <a href="https://github.com/TonyCJ7/FlumeTV-API">FlumeTV API</a> backend.
+</p>
 
-**Official management panel for the FlumeTV Stremio IPTV addon.**  
-Register, link Direct M3U and Xtream sources, monitor live sync status, stream prefetch logs, and install the Stremio addon — paired with the [FlumeTV API](https://github.com/TonyCJ7/FlumeTV-API) backend.
-
-
+<p align="center">
+  <a href="https://github.com/TonyCJ7/FlumeTV-UI">
+    <img src="https://img.shields.io/github/stars/TonyCJ7/FlumeTV-UI?style=for-the-badge&logo=github" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/TonyCJ7/FlumeTV-API">
+    <img src="https://img.shields.io/badge/FlumeTV--API-backend-0ea5e9?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="FlumeTV API">
+  </a>
+  <a href="https://hub.docker.com/r/tonycj7/flumetv-ui">
+    <img src="https://img.shields.io/badge/Docker%20Hub-flumetv--ui-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub">
+  </a>
+  <a href="https://github.com/TonyCJ7/FlumeTV-UI/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey?style=for-the-badge" alt="License CC BY-NC 4.0">
+  </a>
+</p>
 
 ## ☕ Donate
 
-
+<p>
+  <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
+    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/kofi-donate-button.png" alt="Donate on Ko-fi" width="200"/>
+  </a>
+</p>
 
 ---
 
@@ -36,7 +58,7 @@ Register, link Direct M3U and Xtream sources, monitor live sync status, stream p
 
 FlumeTV UI is the **official frontend** for **[FlumeTV](https://github.com/TonyCJ7/FlumeTV-API)** — a self-hostable **Stremio IPTV addon**. It talks to the sibling **[FlumeTV API](https://github.com/TonyCJ7/FlumeTV-API)** over REST and Server-Sent Events (SSE) using session cookies (`credentials: "include"`). By default the **UI** is at **port 7000** and the **API** at **port 7001**. Optionally, **nginx** can expose both on **one host and port** — see [Optional: single host/port (nginx)](#-optional-single-hostport-nginx).
 
-**Docker images:** `[tonycj7/flumetv-ui:latest](https://hub.docker.com/r/tonycj7/flumetv-ui)` (~~190 MB, fast, default) and `[tonycj7/flumetv-ui:configurable](https://hub.docker.com/r/tonycj7/flumetv-ui)` (~~1.1 GB, full env overrides) on Docker Hub.
+**Docker images:** [`tonycj7/flumetv-ui:latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~190 MB, fast, default) and [`tonycj7/flumetv-ui:configurable`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~1.1 GB, full env overrides) on Docker Hub.
 
 > [!IMPORTANT]
 > **FlumeTV is a two-service stack.** This UI does not run standalone — you need the API (and PostgreSQL) running alongside it. Backend setup, REST routes, Stremio addon behavior, and the full server env catalog are documented in the **[FlumeTV API README](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md)**.
@@ -571,7 +593,11 @@ FlumeTV is developed and maintained for self-hosters. If you find it useful, ple
 - 🤝 **[Contribute](#-contributing)** — Report issues or submit pull requests.
 - ☕ **Donate**:
 
-
+<p align="center">
+  <a href="https://ko-fi.com/tonycj07" target="_blank" rel="noopener noreferrer">
+    <img src="https://raw.githubusercontent.com/TonyCJ7/FlumeTV-UI/refs/heads/main/public/assets/kofi-logomark.png" alt="Ko-fi" height="40" />
+  </a>
+</p>
 
 ---
 
