@@ -1,48 +1,15 @@
 import { createSelector } from "@reduxjs/toolkit";
-import type { ConfigsState } from "@/store/configs/configsSlice";
-import type { PrefetchStatusState } from "@/store/prefetchStatus/prefetchStatusSlice";
-import type { ConfigListItem, ConfigPrefetchStatusEntry, RoomLastOutcome } from "@/types/rest.types";
-import {
-  derivePrefetchUiBand,
-  type DerivePrefetchUiBandResult,
-} from "@/utils/prefetchUiBand.utils";
+import type { RootState } from "@/store/store";
+import type { MergedConfigRow } from "@/types/configCard.types";
+import { mergeConfigRow } from "@/utils/prefetchUiBand.utils";
 
-export type MergedConfigRow = Readonly<{
-  item: ConfigListItem;
-  prefetchEntry: ConfigPrefetchStatusEntry | undefined;
-  bandFields: DerivePrefetchUiBandResult;
-  nextTriggerAt: string | null;
-  lastSyncedAt: string | null;
-  lastOutcome: RoomLastOutcome | null;
-  closedReason: string | null;
-  roomUpdatedAt: string | null;
-}>;
+type ConfigPageState = Pick<RootState, "configs" | "prefetchStatus">;
 
-type ConfigPageSliceState = {
-  configs: ConfigsState;
-  prefetchStatus: PrefetchStatusState;
-};
+const selectConfigItems = (state: ConfigPageState) => state.configs.items;
+const selectPrefetchByHash = (state: ConfigPageState) => state.prefetchStatus.byHash;
 
-const selectConfigItems = (state: ConfigPageSliceState) => state.configs.items;
-const selectPrefetchByHash = (state: ConfigPageSliceState) => state.prefetchStatus.byHash;
-
-function mergeConfigRow(
-  item: ConfigListItem,
-  prefetchEntry: ConfigPrefetchStatusEntry | undefined,
-): MergedConfigRow {
-  const bandFields = derivePrefetchUiBand({ listItem: item, prefetchEntry });
-
-  return {
-    item,
-    prefetchEntry,
-    bandFields,
-    nextTriggerAt: prefetchEntry?.nextTriggerAt ?? item.scheduler?.nextTriggerAt ?? null,
-    lastSyncedAt: prefetchEntry?.lastSyncedAt ?? item.lastSyncedAt ?? null,
-    lastOutcome: prefetchEntry?.room.lastOutcome ?? item.roomLastOutcome ?? null,
-    closedReason: prefetchEntry?.room.closedReason ?? null,
-    roomUpdatedAt: prefetchEntry?.room.updatedAt ?? null,
-  };
-}
+export const selectPrefetchEntry = (hash: string) => (state: RootState) =>
+  state.prefetchStatus.byHash[hash];
 
 export const selectMergedConfigRows = createSelector(
   [selectConfigItems, selectPrefetchByHash],

@@ -4,8 +4,6 @@
 
 import type { RoomLogKind, RoomLogSectorStatus, RoomLogTone } from "@/types/room.types";
 
-export type { RoomLogSsePayload } from "@/types/room.types";
-
 /** `event: log_reset` on `GET /api/hashes/:hash/logs/stream` (backend Step 26). */
 export type RoomLogResetSsePayload = Readonly<{
   hash: string;

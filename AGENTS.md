@@ -17,19 +17,19 @@ When principles conflict with convenience: **YAGNI over DRY over premature SOLID
 
 ## Cursor rules
 
-| Rule | `alwaysApply` | Globs | Role |
-| --- | :---: | --- | --- |
-| [design-principles.mdc](.cursor/rules/design-principles.mdc) | yes | — | Scope, extraction, layering |
-| [module-folder-boundaries.mdc](.cursor/rules/module-folder-boundaries.mdc) | yes | — | `types/`, `utils/`, `constants/`, etc. |
-| [frontend-reference-maintenance.mdc](.cursor/rules/frontend-reference-maintenance.mdc) | yes | — | Living product doc |
-| [code-style.mdc](.cursor/rules/code-style.mdc) | no | `**/*.{ts,tsx}` | Imports, helpers, conditionals |
-| [naming-conventions.mdc](.cursor/rules/naming-conventions.mdc) | no | `**/*.{ts,tsx}` | Files, keys, props |
-| [react-next-patterns.mdc](.cursor/rules/react-next-patterns.mdc) | no | `**/*.{ts,tsx}` | App Router, MUI, Redux, i18n |
-| [greenfield-design.mdc](.cursor/rules/greenfield-design.mdc) | no | `**/*.{ts,tsx,css}` | Match shipped UI only |
-| [design-system-boundary.mdc](.cursor/rules/design-system-boundary.mdc) | no | design-system, theme | Domain-neutral DS |
-| [responsive-design.mdc](.cursor/rules/responsive-design.mdc) | no | (see rule) | Mobile vs desktop |
-| [date-fns-usage.mdc](.cursor/rules/date-fns-usage.mdc) | no | (see rule) | Dates/times |
-| [lodash-usage.mdc](.cursor/rules/lodash-usage.mdc) | no | (see rule) | Lodash imports |
+| Rule                                                                                   | `alwaysApply` | Globs                | Role                                   |
+| -------------------------------------------------------------------------------------- | :-----------: | -------------------- | -------------------------------------- |
+| [design-principles.mdc](.cursor/rules/design-principles.mdc)                           |      yes      | —                    | Scope, extraction, layering            |
+| [module-folder-boundaries.mdc](.cursor/rules/module-folder-boundaries.mdc)             |      yes      | —                    | `types/`, `utils/`, `constants/`, etc. |
+| [frontend-reference-maintenance.mdc](.cursor/rules/frontend-reference-maintenance.mdc) |      yes      | —                    | Living product doc                     |
+| [code-style.mdc](.cursor/rules/code-style.mdc)                                         |      no       | `**/*.{ts,tsx}`      | Imports, helpers, conditionals         |
+| [naming-conventions.mdc](.cursor/rules/naming-conventions.mdc)                         |      no       | `**/*.{ts,tsx}`      | Files, keys, props                     |
+| [react-next-patterns.mdc](.cursor/rules/react-next-patterns.mdc)                       |      no       | `**/*.{ts,tsx}`      | App Router, MUI, Redux, i18n           |
+| [greenfield-design.mdc](.cursor/rules/greenfield-design.mdc)                           |      no       | `**/*.{ts,tsx,css}`  | Match shipped UI only                  |
+| [design-system-boundary.mdc](.cursor/rules/design-system-boundary.mdc)                 |      no       | design-system, theme | Domain-neutral DS                      |
+| [responsive-design.mdc](.cursor/rules/responsive-design.mdc)                           |      no       | (see rule)           | Mobile vs desktop                      |
+| [date-fns-usage.mdc](.cursor/rules/date-fns-usage.mdc)                                 |      no       | (see rule)           | Dates/times                            |
+| [lodash-usage.mdc](.cursor/rules/lodash-usage.mdc)                                     |      no       | (see rule)           | Lodash imports                         |
 
 ---
 
@@ -46,19 +46,19 @@ When principles conflict with convenience: **YAGNI over DRY over premature SOLID
 
 Full table: **`module-folder-boundaries.mdc`** and **`docs/frontend-reference.md`** (Architecture).
 
-| Need | Folder |
-| --- | --- |
-| Shared `type` / `interface` | `types/*.types.ts` |
-| Runtime const / enum-as-const | `constants/*.constants.ts` |
-| Pure function, mapper, guard | `utils/*.utils.ts` |
-| Zod + form infer | `validation/*.validation.ts` |
-| Redux slice/thunk/selector | `store/` |
-| React hook | `hooks/use*.ts` |
-| API client, env, i18n instance | `infra/` |
-| Screen wiring, `t()`, dispatch | `containers/` |
-| Domain-neutral UI primitive | `components/design-system/` |
-| Product widget | `components/core/` |
-| User-facing copy | `translations/` |
+| Need                           | Folder                       |
+| ------------------------------ | ---------------------------- |
+| Shared `type` / `interface`    | `types/*.types.ts`           |
+| Runtime const / enum-as-const  | `constants/*.constants.ts`   |
+| Pure function, mapper, guard   | `utils/*.utils.ts`           |
+| Zod + form infer               | `validation/*.validation.ts` |
+| Redux slice/thunk/selector     | `store/`                     |
+| React hook                     | `hooks/use*.ts`              |
+| API client, env, i18n instance | `infra/`                     |
+| Screen wiring, `t()`, dispatch | `containers/`                |
+| Domain-neutral UI primitive    | `components/design-system/`  |
+| Product widget                 | `components/core/`           |
+| User-facing copy               | `translations/`              |
 
 Extract to `utils/` / `types/` only when **DRY** applies (second real use or same PR needs it twice) — not for one-liners (**`code-style.mdc`**).
 
@@ -66,24 +66,24 @@ Extract to `utils/` / `types/` only when **DRY** applies (second real use or sam
 
 ## Before finishing a task
 
-| Step | Command / action |
-| --- | --- |
-| Principles pass | YAGNI / DRY / SOLID quick checks in **`design-principles.mdc`** |
-| Format + lint + types | `npm run format:check && npm run lint && npm run typecheck` |
-| Build (when touching app wiring) | `npm run build` |
-| Unused exports (optional) | `npm run knip` |
-| Product doc | If shipped behavior changed → **`docs/frontend-reference.md`** + **`Last updated:`** date |
-| Commits / PR | Only when the user asks |
+| Step                             | Command / action                                                                          |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| Principles pass                  | YAGNI / DRY / SOLID quick checks in **`design-principles.mdc`**                           |
+| Format + lint + types            | `npm run format:check && npm run lint && npm run typecheck`                               |
+| Build (when touching app wiring) | `npm run build`                                                                           |
+| Unused exports (optional)        | `npm run knip`                                                                            |
+| Product doc                      | If shipped behavior changed → **`docs/frontend-reference.md`** + **`Last updated:`** date |
+| Commits / PR                     | Only when the user asks                                                                   |
 
 ---
 
 ## Documentation map
 
-| Doc | Use |
-| --- | --- |
-| [docs/frontend-reference.md](docs/frontend-reference.md) | What the app **does** — routes, API, SSE, features |
-| [README.md](README.md) | Quick start, scripts, env |
-| [FlumeTV-API/docs/backend-reference.md](../FlumeTV-API/docs/backend-reference.md) | Server behavior, SSE payloads |
+| Doc                                                                               | Use                                                |
+| --------------------------------------------------------------------------------- | -------------------------------------------------- |
+| [docs/frontend-reference.md](docs/frontend-reference.md)                          | What the app **does** — routes, API, SSE, features |
+| [README.md](README.md)                                                            | Quick start, scripts, env                          |
+| [FlumeTV-API/docs/backend-reference.md](../FlumeTV-API/docs/backend-reference.md) | Server behavior, SSE payloads                      |
 
 ---
 

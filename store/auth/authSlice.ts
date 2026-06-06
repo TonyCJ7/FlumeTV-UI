@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { bootstrapSession, loginUser, logoutUser, registerUser } from "@/store/auth/authThunks";
-
-export type AuthDialogMode = "login" | "register";
+import type { RootState } from "@/store/store";
+import type { AuthDialogMode } from "@/types/auth.types";
 
 type AuthState = {
   userId: string | null;
@@ -54,15 +54,6 @@ const authSlice = createSlice({
     },
     clearConfigureLoginHint(state) {
       state.configureLoginUserId = null;
-    },
-    clearAuth(state) {
-      state.userId = null;
-      state.sessionReady = false;
-      state.authDialogOpen = false;
-      state.authDialogMode = "login";
-      state.configureLoginUserId = null;
-      state.registerSuccessUserId = null;
-      state.authSubmitStatus = "idle";
     },
     /** Session cookie missing or invalid — used by the API client interceptor. */
     expireSession(state) {
@@ -140,22 +131,19 @@ export const {
   setConfigureLoginUserId,
   clearConfigureLoginHint,
   openAuthDialog,
-  clearAuth,
   expireSession,
   dismissRegisterSuccess,
 } = authSlice.actions;
 
 export const authReducer = authSlice.reducer;
 
-export const selectUserId = (state: { auth: AuthState }) => state.auth.userId;
-export const selectIsAuthed = (state: { auth: AuthState }) => state.auth.userId !== null;
-export const selectAuthDialogOpen = (state: { auth: AuthState }) => state.auth.authDialogOpen;
-export const selectAuthDialogMode = (state: { auth: AuthState }) => state.auth.authDialogMode;
-export const selectSessionReady = (state: { auth: AuthState }) => state.auth.sessionReady;
-export const selectRegisterSuccessUserId = (state: { auth: AuthState }) =>
-  state.auth.registerSuccessUserId;
-export const selectAuthSubmitStatus = (state: { auth: AuthState }) => state.auth.authSubmitStatus;
-export const selectConfigureLoginUserId = (state: { auth: AuthState }) =>
-  state.auth.configureLoginUserId;
-export const selectAuthRegisterAllowed = (state: { auth: AuthState }) =>
+export const selectUserId = (state: RootState) => state.auth.userId;
+export const selectIsAuthed = (state: RootState) => state.auth.userId !== null;
+export const selectAuthDialogOpen = (state: RootState) => state.auth.authDialogOpen;
+export const selectAuthDialogMode = (state: RootState) => state.auth.authDialogMode;
+export const selectSessionReady = (state: RootState) => state.auth.sessionReady;
+export const selectRegisterSuccessUserId = (state: RootState) => state.auth.registerSuccessUserId;
+export const selectAuthSubmitStatus = (state: RootState) => state.auth.authSubmitStatus;
+export const selectConfigureLoginUserId = (state: RootState) => state.auth.configureLoginUserId;
+export const selectAuthRegisterAllowed = (state: RootState) =>
   state.auth.configureLoginUserId === null;

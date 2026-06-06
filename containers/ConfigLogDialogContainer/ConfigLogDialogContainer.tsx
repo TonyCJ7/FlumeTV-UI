@@ -7,15 +7,19 @@ import { ConfigLogViewer } from "@/components/core/ConfigLogViewer";
 import { Styled } from "@/containers/ConfigLogDialogContainer/ConfigLogDialogContainer.styled";
 import { DialogShell, FeedbackBanner } from "@/components/design-system";
 import { useConfigLogStream } from "@/hooks/useConfigLogStream";
+import { selectConfigByHash } from "@/store/configs/configsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { selectPrefetchEntry } from "@/store/prefetchStatus/prefetchStatusSlice";
+import { selectPrefetchEntry } from "@/store/prefetchStatus/prefetchStatusSelectors";
 import {
   closeLogDialog,
   selectLogDialogHash,
   selectLogDialogOpen,
   selectLogLines,
 } from "@/store/ui/uiSlice";
-import { extractProgressPercent } from "@/utils/progressDisplay.utils";
+import {
+  extractProgressPercent,
+  resolveLogDialogSyncProgress,
+} from "@/utils/configCardFormat.utils";
 
 export function ConfigLogDialogContainer() {
   const { t } = useTranslation();
@@ -27,13 +31,11 @@ export function ConfigLogDialogContainer() {
   const prefetchEntry = useAppSelector((state) =>
     hash ? selectPrefetchEntry(hash)(state) : undefined,
   );
-  const listItem = useAppSelector((state) =>
-    hash ? state.configs.items.find((item) => item.hash === hash) : undefined,
-  );
+  const listItem = useAppSelector(hash ? selectConfigByHash(hash) : () => undefined);
 
   const streamStatus = useConfigLogStream(open, hash);
 
-  const resolvedProgress = prefetchEntry?.progress ?? listItem?.progress ?? null;
+  const resolvedProgress = resolveLogDialogSyncProgress(prefetchEntry, listItem);
   const progressPercent = extractProgressPercent(resolvedProgress);
 
   const title =

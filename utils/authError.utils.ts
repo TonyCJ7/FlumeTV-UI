@@ -1,9 +1,12 @@
 import type { TFunction } from "i18next";
 import { REST_ERROR_CODES } from "@/constants/restError.constants";
-import type { RestApiErrorCode } from "@/types/restError.types";
-import { isRestApiFallbackCode } from "@/types/restError.types";
-import type { AuthDialogMode } from "@/store/auth/authSlice";
-import { mapRestFallbackCodeToMessage } from "@/utils/restError.utils";
+import type { AuthDialogMode } from "@/types/auth.types";
+import type { RestApiFailureInput } from "@/types/restError.types";
+import {
+  isRestApiFallbackCode,
+  parseRestApiErrorCode,
+  resolveRestFallbackMessage,
+} from "@/utils/restError.utils";
 
 type AuthFormField = "userId" | "password" | "form";
 
@@ -13,14 +16,8 @@ type MappedAuthError = Readonly<{
   message: string;
 }>;
 
-type AuthFailureInput = Readonly<{
-  code: string;
-  message: string;
-  httpStatus?: number | null;
-}>;
-
 export function mapAuthApiFailure(
-  failure: AuthFailureInput,
+  failure: RestApiFailureInput,
   mode: AuthDialogMode,
   t: TFunction,
 ): MappedAuthError {
@@ -36,11 +33,18 @@ export function mapAuthApiFailure(
     return {
       field: "form",
       code: failure.code,
-      message: failure.message || mapRestFallbackCodeToMessage(failure.code, t),
+      message: resolveRestFallbackMessage(failure.code, failure.message, t),
     };
   }
 
-  const code = failure.code as RestApiErrorCode;
+  const code = parseRestApiErrorCode(failure.code);
+  if (code === null) {
+    return {
+      field: "form",
+      code: failure.code,
+      message: failure.message || t("Common.State_GenericErrorHeading"),
+    };
+  }
 
   switch (code) {
     case REST_ERROR_CODES.AUTH_INVALID_CREDENTIALS:

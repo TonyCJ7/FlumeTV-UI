@@ -1,4 +1,4 @@
-import { isSessionRestErrorCode } from "@/utils/restError.utils";
+import { REST_ERROR_CODES } from "@/constants/restError.constants";
 import type { RestApiErrorCode } from "@/types/restError.types";
 
 export class RestApiError extends Error {
@@ -15,6 +15,9 @@ export class RestApiError extends Error {
   }
 
   get isSessionError(): boolean {
-    return isSessionRestErrorCode(this.code);
+    return (
+      this.code === REST_ERROR_CODES.AUTH_SESSION_MISSING ||
+      this.code === REST_ERROR_CODES.AUTH_SESSION_INVALID
+    );
   }
 }

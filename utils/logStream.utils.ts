@@ -1,5 +1,9 @@
 import { format } from "date-fns";
-import { ROOM_LOG_TONES } from "@/constants/logStream.constants";
+import {
+  ROOM_LOG_KINDS,
+  ROOM_LOG_SECTOR_STATUSES,
+  ROOM_LOG_TONES,
+} from "@/constants/logStream.constants";
 import { getBaseApiUrl } from "@/infra/env";
 import type { RoomLogResetSsePayload } from "@/types/logStream.types";
 import type { UiLogLine } from "@/types/logStream.types";
@@ -9,7 +13,6 @@ import type {
   RoomLogSsePayload,
   RoomLogTone,
 } from "@/types/room.types";
-import type { RoomSyncProgress } from "@/types/room.types";
 import { nowIso } from "@/utils/dateTime.utils";
 import { parseJsonObject } from "@/utils/json.utils";
 
@@ -40,7 +43,7 @@ function isRoomLogTone(value: string): value is RoomLogTone {
 }
 
 /** Maps legacy worker `level` to `tone` when `tone` is absent on SSE payloads. */
-export function roomLogToneFromLegacyLevel(level: string | null | undefined): RoomLogTone {
+function roomLogToneFromLegacyLevel(level: string | null | undefined): RoomLogTone {
   switch (level) {
     case "success":
       return "success";
@@ -62,15 +65,18 @@ function parseOptionalString(value: unknown): string | undefined {
 }
 
 function parseRoomLogKind(value: unknown): RoomLogKind | undefined {
-  if (value === "text" || value === "sector") {
-    return value;
+  if (typeof value === "string" && (ROOM_LOG_KINDS as readonly string[]).includes(value)) {
+    return value as RoomLogKind;
   }
   return undefined;
 }
 
 function parseRoomLogSectorStatus(value: unknown): RoomLogSectorStatus | undefined {
-  if (value === "pending" || value === "in_progress" || value === "success" || value === "error") {
-    return value;
+  if (
+    typeof value === "string" &&
+    (ROOM_LOG_SECTOR_STATUSES as readonly string[]).includes(value)
+  ) {
+    return value as RoomLogSectorStatus;
   }
   return undefined;
 }
@@ -142,16 +148,32 @@ export function parseRoomLogSsePayload(raw: string): RoomLogSsePayload | null {
   };
 }
 
-export function parseRoomSyncProgressFromSse(raw: string): RoomSyncProgress | null {
-  const record = parseJsonObject(raw);
-  if (!record) {
-    return null;
+function isTerminalLogSectorStatus(status: RoomLogSectorStatus | undefined): boolean {
+  return status === "success" || status === "error";
+}
+
+/**
+ * Whether an incoming line should replace an existing row with the same `logKey`.
+ * Highest `seq` wins, except terminal sector rows beat stale `in_progress` when
+ * concurrent persists reorder SSE delivery.
+ */
+export function shouldReplaceMergedLogLine(existing: UiLogLine, incoming: UiLogLine): boolean {
+  const existingTerminal = isTerminalLogSectorStatus(existing.status);
+  const incomingTerminal = isTerminalLogSectorStatus(incoming.status);
+
+  if (existingTerminal && incoming.status === "in_progress") {
+    return false;
   }
-  const percent = record.percent;
-  if (typeof percent !== "number") {
-    return null;
+
+  if (incoming.seq > existing.seq) {
+    return true;
   }
-  return { percent: Math.round(percent) };
+
+  if (incoming.seq < existing.seq) {
+    return incomingTerminal && !existingTerminal;
+  }
+
+  return true;
 }
 
 export function roomLogPayloadToUiLogLine(payload: RoomLogSsePayload): UiLogLine {

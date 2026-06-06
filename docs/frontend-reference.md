@@ -171,7 +171,7 @@ Authoritative shapes: `FlumeTV-API/src/types/rest.types.ts`, `room.types.ts` →
 | **`configNameUpdated: true`**                                      | Update card title only; no new enqueue |
 | Hash transition (`oldHashUnlinked`, new `hash`, `syncEnqueued`, …) | Re-key list; refresh prefetch one-shot |
 
-Implemented in `utils/config.utils.ts` (`classifyPutConfigResponse`) and `utils/editConfigSuccess.utils.ts`.
+Implemented in `utils/config.utils.ts` (`classifyPutConfigResponse`) and `utils/editConfig.utils.ts`.
 
 ### Error codes → UI (shipped mappers)
 
@@ -278,7 +278,7 @@ Backend exposes **`GET /api/hashes/:hash/room/events`** (`status`, `progress`, `
 ### Shell
 
 - Primary nav: Account/install vs Configs (`PrimaryNavTabs` + icons)
-- Theme toggle (sun/moon morph), **donate dialog** — shell donate buttons open a dialog with a Ko-fi link (`constants/donate.constants.ts`; GitHub Sponsors commented out until program approval)
+- Theme toggle (sun/moon morph), **donate dialog** — shell donate buttons open a dialog with a Ko-fi link (`constants/brand.constants.ts` → `DONATE_KOFI_URL`; GitHub Sponsors commented out until program approval)
 - Breakpoints: MUI **`md` = 970px**; shell hamburger **&lt; 600px**; bottom duplicate donate on narrow viewports
 
 ### Brand assets
@@ -308,9 +308,9 @@ Backend exposes **`GET /api/hashes/:hash/room/events`** (`status`, `progress`, `
 
 **Docker — two images:**
 
-| Tag | Dockerfile | Size | Runtime env |
-| --- | ---------- | ---- | ----------- |
-| **`latest`**, **`1.0.0`** | `Dockerfile` — multi-stage standalone, pre-built | ~190 MB | **`PORT`** only; **`BASE_API_URL`** fixed at **`http://localhost:7001`** |
+| Tag                                          | Dockerfile                                                    | Size    | Runtime env                                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| **`latest`**, **`1.0.0`**                    | `Dockerfile` — multi-stage standalone, pre-built              | ~190 MB | **`PORT`** only; **`BASE_API_URL`** fixed at **`http://localhost:7001`**                     |
 | **`configurable`**, **`1.0.0-configurable`** | `Dockerfile.configurable` — single-stage, full `node_modules` | ~1.1 GB | **`PORT`**, **`BASE_API_URL`** via `.env` + container restart (in-container `npm run build`) |
 
 Version pins match **`package.json`** `version`. Floating tags (`latest`, `configurable`) track the newest build of each variant.

@@ -5,10 +5,18 @@ import type { TFunction } from "i18next";
 import type { RestApiErrorCode, RestApiFallbackCode, RestErrorBody } from "@/types/restError.types";
 import { isJsonObject } from "@/utils/json.utils";
 
-export function isSessionRestErrorCode(code: string): boolean {
-  return (
-    code === REST_ERROR_CODES.AUTH_SESSION_MISSING || code === REST_ERROR_CODES.AUTH_SESSION_INVALID
-  );
+export function isRestApiFallbackCode(code: string): code is RestApiFallbackCode {
+  return Object.values(REST_API_FALLBACK_CODES).includes(code as RestApiFallbackCode);
+}
+
+export function parseRestApiErrorCode(code: string): RestApiErrorCode | null {
+  if ((Object.values(REST_ERROR_CODES) as string[]).includes(code)) {
+    return code as RestApiErrorCode;
+  }
+  if ((Object.values(REST_API_FALLBACK_CODES) as string[]).includes(code)) {
+    return code as RestApiErrorCode;
+  }
+  return null;
 }
 
 function isRestErrorBody(value: unknown): value is RestErrorBody {
@@ -18,8 +26,16 @@ function isRestErrorBody(value: unknown): value is RestErrorBody {
   return typeof value.code === "string" && typeof value.message === "string";
 }
 
+export function resolveRestFallbackMessage(
+  code: RestApiFallbackCode,
+  message: string,
+  t: TFunction,
+): string {
+  return message || mapRestFallbackCodeToMessage(code, t);
+}
+
 /** Client-only REST fallback copy — `t()` literals for i18n scanners. */
-export function mapRestFallbackCodeToMessage(code: RestApiFallbackCode, t: TFunction): string {
+function mapRestFallbackCodeToMessage(code: RestApiFallbackCode, t: TFunction): string {
   switch (code) {
     case REST_API_FALLBACK_CODES.REQUEST_TIMEOUT:
       return t("RestError.Message_RequestTimedOut");
@@ -51,7 +67,7 @@ export function toRestApiError(error: unknown): RestApiError {
 
     if (body) {
       return new RestApiError({
-        code: body.code as RestApiErrorCode,
+        code: parseRestApiErrorCode(body.code) ?? REST_API_FALLBACK_CODES.UNKNOWN,
         message: body.message,
         httpStatus,
       });

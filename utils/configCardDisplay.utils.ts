@@ -1,4 +1,4 @@
-import type { MergedConfigRow } from "@/store/prefetchStatus/prefetchStatusSelectors";
+import { CONFIG_CARD_EMPTY_PLACEHOLDER } from "@/constants/config.constants";
 import type {
   ConfigCardDetailFormatters,
   ConfigCardDetailRowLabels,
@@ -7,15 +7,12 @@ import type {
   ConfigSourceCardStatusDisplay,
   ConfigSourceCardStatusLabels,
   ConfigSourceCardStatusVariant,
+  MergedConfigRow,
 } from "@/types/configCard.types";
-import {
-  CONFIG_CARD_EMPTY_PLACEHOLDER,
-  formatRoomCurrentStatus,
-  isLastOutcomeWithFailureDetail,
-} from "@/utils/configCardFormat.utils";
+import { formatRoomCurrentStatus } from "@/utils/configCardFormat.utils";
 import type { RoomLastOutcome } from "@/types/room.types";
-import type { PrefetchUiBand } from "@/utils/prefetchUiBand.utils";
-import { extractProgressPercent } from "@/utils/progressDisplay.utils";
+import type { PrefetchUiBand } from "@/types/prefetchUiBand.types";
+import { extractProgressPercent } from "@/utils/configCardFormat.utils";
 
 function buildLastOutcomeDetailRows(
   outcomeLabel: string,
@@ -27,7 +24,7 @@ function buildLastOutcomeDetailRows(
   const rows: Array<readonly [string, string]> = [
     [outcomeLabel, formatters.formatTerminal(lastOutcome)],
   ];
-  if (isLastOutcomeWithFailureDetail(lastOutcome) && closedReason) {
+  if ((lastOutcome === "failed" || lastOutcome === "error") && closedReason) {
     rows.push([detailLabel, formatters.formatClosedReason(closedReason)]);
   }
   return rows;
@@ -43,9 +40,7 @@ export function bandToStatusVariant(band: PrefetchUiBand): ConfigSourceCardStatu
   return "idle";
 }
 
-export function lastOutcomeToTagVariant(
-  outcome: RoomLastOutcome,
-): ConfigSourceCardLastOutcomeVariant {
+function lastOutcomeToTagVariant(outcome: RoomLastOutcome): ConfigSourceCardLastOutcomeVariant {
   if (outcome === "completed") {
     return "success";
   }
@@ -68,8 +63,7 @@ export function buildConfigSourceCardStatusDisplay(
     labels,
   });
   const hideLastOutcome = bandFields.band === "inProgress";
-  const lastOutcomeLabel =
-    !hideLastOutcome && lastOutcome ? formatTerminal(lastOutcome) : null;
+  const lastOutcomeLabel = !hideLastOutcome && lastOutcome ? formatTerminal(lastOutcome) : null;
   const lastOutcomeVariant =
     !hideLastOutcome && lastOutcome ? lastOutcomeToTagVariant(lastOutcome) : null;
   return { primary, lastOutcomeLabel, lastOutcomeVariant };
@@ -95,10 +89,11 @@ export function buildConfigSourceCardCtaVisibility(
 ): ConfigSourceCardCtaVisibility {
   const { bandFields, prefetchEntry } = row;
   const band = bandFields.band;
+  const showLogs = prefetchEntry?.hasLogs === true;
   return {
     showRefetch: band === "refetchAvailable",
     showCancel: (band === "inQueue" || band === "inProgress") && bandFields.triggeredByMe,
-    showLogs: prefetchEntry?.hasLogs === true,
+    showLogs,
   };
 }
 

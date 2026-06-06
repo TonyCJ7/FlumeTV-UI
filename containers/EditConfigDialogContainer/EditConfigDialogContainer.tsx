@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapse, Stack } from "@mui/material";
 import { useDialogFullScreen } from "@/hooks/useLayoutMode";
@@ -16,6 +16,7 @@ import {
   ToastSnackbar,
   ToastWell,
 } from "@/components/design-system";
+import { ConfigEpgFieldset } from "@/components/core/ConfigEpgFieldset";
 import { SourceTypeBadge } from "@/components/core/SourceTypeBadge";
 import { Styled as AddConfigStyled } from "@/containers/AddConfigDialogContainer/AddConfigDialogContainer.styled";
 import { Styled } from "@/containers/EditConfigDialogContainer/EditConfigDialogContainer.styled";
@@ -40,8 +41,7 @@ import {
   toPostConfigDirectRequestBody,
   toPostConfigXtreamRequestBody,
 } from "@/utils/config.utils";
-import { mapEditConfigApiFailure } from "@/utils/editConfigError.utils";
-import { formatEditConfigSuccessMessage } from "@/utils/editConfigSuccess.utils";
+import { formatEditConfigSuccessMessage, mapEditConfigApiFailure } from "@/utils/editConfig.utils";
 import {
   createAddConfigDirectFormSchema,
   createAddConfigXtreamFormSchema,
@@ -53,19 +53,6 @@ type ToastState = Readonly<{
   message: string;
   severity: "success" | "error" | "info";
 }>;
-
-function EpgFieldset({
-  legend,
-  epgEnabled,
-  children,
-}: Readonly<{ legend: string; epgEnabled: boolean; children: ReactNode }>) {
-  return (
-    <AddConfigStyled.EpgFieldset>
-      <AddConfigStyled.EpgLegend>{legend}</AddConfigStyled.EpgLegend>
-      <Stack spacing={epgEnabled ? 3 : 0}>{children}</Stack>
-    </AddConfigStyled.EpgFieldset>
-  );
-}
 
 export function EditConfigDialogContainer() {
   const { t } = useTranslation();
@@ -332,7 +319,10 @@ export function EditConfigDialogContainer() {
                   helperText={directForm.formState.errors.m3uUrl?.message}
                   {...directForm.register("m3uUrl")}
                 />
-                <EpgFieldset legend={t("AddConfig.Fieldset_Epg")} epgEnabled={directEpgEnabled}>
+                <ConfigEpgFieldset
+                  legend={t("AddConfig.Fieldset_Epg")}
+                  epgEnabled={directEpgEnabled}
+                >
                   <CheckField
                     label={t("AddConfig.FieldLabel_EnableEpg")}
                     checked={directEpgEnabled}
@@ -365,7 +355,7 @@ export function EditConfigDialogContainer() {
                       />
                     </Stack>
                   </Collapse>
-                </EpgFieldset>
+                </ConfigEpgFieldset>
               </Stack>
             ) : (
               <Stack spacing={3} component="form" noValidate onSubmit={handleXtreamSubmit}>
@@ -405,7 +395,10 @@ export function EditConfigDialogContainer() {
                   visibilityToggleAriaLabel={passwordToggleAriaLabel}
                   {...xtreamForm.register("panelPassword")}
                 />
-                <EpgFieldset legend={t("AddConfig.Fieldset_Epg")} epgEnabled={xtreamEpgEnabled}>
+                <ConfigEpgFieldset
+                  legend={t("AddConfig.Fieldset_Epg")}
+                  epgEnabled={xtreamEpgEnabled}
+                >
                   <CheckField
                     label={t("AddConfig.FieldLabel_EnableEpg")}
                     checked={xtreamEpgEnabled}
@@ -462,7 +455,7 @@ export function EditConfigDialogContainer() {
                       />
                     </Stack>
                   </Collapse>
-                </EpgFieldset>
+                </ConfigEpgFieldset>
               </Stack>
             )}
           </Styled.FieldStack>

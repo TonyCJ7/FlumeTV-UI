@@ -5,10 +5,10 @@ import { Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DialogShell } from "@/components/design-system";
 import { DONATE_KOFI_LOGO_SRC } from "@/constants/brand.constants";
-import { DONATE_KOFI_URL } from "@/constants/donate.constants";
+import { DONATE_KOFI_URL } from "@/constants/brand.constants";
 // GitHub Sponsors — uncomment after GitHub Sponsors program approval.
 // import { DONATE_GITHUB_SPONSORS_LOGO_SRC } from "@/constants/brand.constants";
-// import { DONATE_GITHUB_SPONSORS_URL } from "@/constants/donate.constants";
+// import { DONATE_GITHUB_SPONSORS_URL } from "@/constants/brand.constants";
 import { Styled } from "./DonateDialogContainer.styled";
 
 type DonateDialogContainerProps = Readonly<{

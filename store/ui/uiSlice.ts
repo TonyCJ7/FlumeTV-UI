@@ -1,9 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { LOG_STREAM_RING_BUFFER_MAX } from "@/constants/logStream.constants";
-import type { ConfigConfirmKind } from "@/types/configConfirm.types";
+import type { RootState } from "@/store/store";
+import type { ConfigConfirmKind } from "@/types/ui.types";
 import type { UiLogLine } from "@/types/logStream.types";
-
-export type AddConfigTab = "direct" | "xtream";
+import type { AddConfigTab } from "@/types/ui.types";
+import { shouldReplaceMergedLogLine } from "@/utils/logStream.utils";
 
 type UiState = {
   logDialogOpen: boolean;
@@ -52,7 +53,7 @@ const uiSlice = createSlice({
         const existingIndex = state.logLines.findIndex((line) => line.logKey === incoming.logKey);
         if (existingIndex >= 0) {
           const existing = state.logLines[existingIndex];
-          if (incoming.seq >= existing.seq) {
+          if (shouldReplaceMergedLogLine(existing, incoming)) {
             state.logLines[existingIndex] = incoming;
           }
           return;
@@ -119,13 +120,13 @@ export const {
 
 export const uiReducer = uiSlice.reducer;
 
-export const selectLogDialogOpen = (state: { ui: UiState }) => state.ui.logDialogOpen;
-export const selectLogDialogHash = (state: { ui: UiState }) => state.ui.logDialogHash;
-export const selectLogLines = (state: { ui: UiState }) => state.ui.logLines;
-export const selectAddConfigDialogOpen = (state: { ui: UiState }) => state.ui.addConfigDialogOpen;
-export const selectAddConfigTab = (state: { ui: UiState }) => state.ui.addConfigTab;
-export const selectEditConfigDialogOpen = (state: { ui: UiState }) => state.ui.editConfigDialogOpen;
-export const selectEditConfigHash = (state: { ui: UiState }) => state.ui.editConfigHash;
-export const selectConfigConfirmOpen = (state: { ui: UiState }) => state.ui.configConfirmOpen;
-export const selectConfigConfirmKind = (state: { ui: UiState }) => state.ui.configConfirmKind;
-export const selectConfigConfirmHash = (state: { ui: UiState }) => state.ui.configConfirmHash;
+export const selectLogDialogOpen = (state: RootState) => state.ui.logDialogOpen;
+export const selectLogDialogHash = (state: RootState) => state.ui.logDialogHash;
+export const selectLogLines = (state: RootState) => state.ui.logLines;
+export const selectAddConfigDialogOpen = (state: RootState) => state.ui.addConfigDialogOpen;
+export const selectAddConfigTab = (state: RootState) => state.ui.addConfigTab;
+export const selectEditConfigDialogOpen = (state: RootState) => state.ui.editConfigDialogOpen;
+export const selectEditConfigHash = (state: RootState) => state.ui.editConfigHash;
+export const selectConfigConfirmOpen = (state: RootState) => state.ui.configConfirmOpen;
+export const selectConfigConfirmKind = (state: RootState) => state.ui.configConfirmKind;
+export const selectConfigConfirmHash = (state: RootState) => state.ui.configConfirmHash;

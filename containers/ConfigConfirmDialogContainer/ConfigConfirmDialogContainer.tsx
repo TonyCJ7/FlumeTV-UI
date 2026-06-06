@@ -10,13 +10,9 @@ import {
   selectConfigByHash,
   setConfigMutating,
 } from "@/store/configs/configsSlice";
-import {
-  cancelConfigHashSync,
-  deleteConfig,
-  fetchConfigsList,
-} from "@/store/configs/configsThunks";
+import { cancelConfigHashSync, deleteConfig } from "@/store/configs/configsThunks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchPrefetchStatus } from "@/store/prefetchStatus/prefetchStatusThunks";
+import { useRefreshConfigsAndPrefetch } from "@/hooks/useRefreshConfigsAndPrefetch";
 import {
   closeConfigConfirmDialog,
   selectConfigConfirmHash,
@@ -71,9 +67,7 @@ export function ConfigConfirmDialogContainer({ onToast }: ConfigConfirmDialogCon
     return null;
   }, [configName, kind, t]);
 
-  const refreshListAndPrefetch = useCallback(async () => {
-    await Promise.all([dispatch(fetchConfigsList()), dispatch(fetchPrefetchStatus())]);
-  }, [dispatch]);
+  const refreshListAndPrefetch = useRefreshConfigsAndPrefetch();
 
   const handleDismiss = useCallback(() => {
     if (confirming) {
@@ -152,7 +146,12 @@ export function ConfigConfirmDialogContainer({ onToast }: ConfigConfirmDialogCon
       hideHeaderSeparator
       footer={
         <Styled.ActionsRow>
-          <Button type="button" appearance="secondary" disabled={confirming} onClick={handleDismiss}>
+          <Button
+            type="button"
+            appearance="secondary"
+            disabled={confirming}
+            onClick={handleDismiss}
+          >
             {copy.dismiss}
           </Button>
           <Button

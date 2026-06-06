@@ -3,6 +3,7 @@ import { apiClient } from "@/infra/apiClient";
 import { RestApiError } from "@/infra/restApiError";
 import type {
   GetStremioManifestUrlResponseBody,
+  PostChangePasswordRequestBody,
   PostChangePasswordResponseBody,
 } from "@/types/rest.types";
 import type { ChangePasswordFormValues } from "@/validation/changePassword.validation";
@@ -41,7 +42,7 @@ export const changePassword = createAsyncThunk<
   { rejectValue: InstallThunkRejectValue }
 >("install/changePassword", async (values, { rejectWithValue }) => {
   try {
-    const body = {
+    const body: PostChangePasswordRequestBody = {
       currentPassword: values.currentPassword,
       newPassword: values.newPassword,
     };

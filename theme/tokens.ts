@@ -133,10 +133,6 @@ const elevationShadowTokens = {
   },
 } as const;
 
-export function getElevationShadowTokenSet(mode: PaletteMode) {
-  return mode === "light" ? elevationShadowTokens.light : elevationShadowTokens.dark;
-}
-
 /** Merged segment control (`.auth-segment`) — `SegmentTabs`. */
 const segmentTabTokens = {
   light: {

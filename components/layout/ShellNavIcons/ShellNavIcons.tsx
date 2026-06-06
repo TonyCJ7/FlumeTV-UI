@@ -1,7 +1,7 @@
 "use client";
 
-/** Shell nav icons (user + list). */
-export function PrimaryNavIconInstall() {
+/** Shell primary-nav icons (user + list). */
+export function ShellNavIconUser() {
   return (
     <svg viewBox="0 0 24 24" width={20} height={20} focusable="false" aria-hidden>
       <path
@@ -12,7 +12,7 @@ export function PrimaryNavIconInstall() {
   );
 }
 
-export function PrimaryNavIconConfig() {
+export function ShellNavIconList() {
   return (
     <svg viewBox="0 0 24 24" width={20} height={20} focusable="false" aria-hidden>
       <path

@@ -39,21 +39,21 @@ const Toggle = styled("button")(({ theme }) => {
 /** Sun disc + ray layout (viewBox units). */
 export const SUN_CORE_RADIUS = 5.75;
 /** Space between core edge and ray inner tip. */
-export const SUN_RAY_GAP = 4;
+const SUN_RAY_GAP = 4;
 /** Length of each ray segment (inner tip → outer tip). */
-export const SUN_RAY_LENGTH = 3;
+const SUN_RAY_LENGTH = 3;
 export const SUN_RAY_INNER = SUN_CORE_RADIUS + SUN_RAY_GAP;
 export const SUN_RAY_OUTER = SUN_RAY_INNER + SUN_RAY_LENGTH;
 
 /** Moon crescent mask — sits to the right of disc center; negative angle tilts like a “C” leaning left. */
-export const MOON_MASK_ANGLE = -32;
-export const MOON_MASK_DISTANCE = 4;
+const MOON_MASK_ANGLE = -32;
+const MOON_MASK_DISTANCE = 4;
 export const MOON_MASK_RADIUS = 5;
-export const DISC_CENTER = 12;
+const DISC_CENTER = 12;
 
 /** Resting rotation for sun / moon (degrees). */
-export const ICON_ROTATION_SUN = 120;
-export const ICON_ROTATION_MOON = -12;
+const ICON_ROTATION_SUN = 120;
+const ICON_ROTATION_MOON = -12;
 
 const iconSpinDurationMs = motion.durationSlow + 180;
 

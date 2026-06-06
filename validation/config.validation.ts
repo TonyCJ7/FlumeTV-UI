@@ -93,6 +93,18 @@ export function createAddConfigXtreamFormSchema(t: TFunction) {
             path: ["customEpgUrl"],
           });
         }
+        return;
+      }
+
+      if (values.epgSource === "panel" && values.epgUrl !== "") {
+        const urlResult = httpUrlSchema.safeParse(values.epgUrl);
+        if (!urlResult.success) {
+          ctx.addIssue({
+            code: "custom",
+            message: urlResult.error.issues[0]?.message ?? t("Validation.Error_UrlInvalid"),
+            path: ["epgUrl"],
+          });
+        }
       }
     });
 }

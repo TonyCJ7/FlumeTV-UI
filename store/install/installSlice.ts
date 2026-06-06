@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { clearAuth, expireSession } from "@/store/auth/authSlice";
+import { expireSession } from "@/store/auth/authSlice";
 import { logoutUser } from "@/store/auth/authThunks";
 import { changePassword, fetchStremioManifestUrl } from "@/store/install/installThunks";
+import type { RootState } from "@/store/store";
 
 type InstallState = {
   manifestUrl: string | null;
@@ -50,7 +51,6 @@ const installSlice = createSlice({
       .addCase(changePassword.rejected, (state) => {
         state.changePasswordStatus = "idle";
       })
-      .addCase(clearAuth, () => initialState)
       .addCase(expireSession, () => initialState)
       .addCase(logoutUser.fulfilled, () => initialState)
       .addCase(logoutUser.rejected, () => initialState);
@@ -59,12 +59,8 @@ const installSlice = createSlice({
 
 export const installReducer = installSlice.reducer;
 
-export const selectManifestUrl = (state: { install: InstallState }) => state.install.manifestUrl;
-export const selectStremioWebInstallUrl = (state: { install: InstallState }) =>
-  state.install.stremioWebInstallUrl;
-export const selectManifestStatus = (state: { install: InstallState }) =>
-  state.install.manifestStatus;
-export const selectManifestError = (state: { install: InstallState }) =>
-  state.install.manifestError;
-export const selectChangePasswordStatus = (state: { install: InstallState }) =>
-  state.install.changePasswordStatus;
+export const selectManifestUrl = (state: RootState) => state.install.manifestUrl;
+export const selectStremioWebInstallUrl = (state: RootState) => state.install.stremioWebInstallUrl;
+export const selectManifestStatus = (state: RootState) => state.install.manifestStatus;
+export const selectManifestError = (state: RootState) => state.install.manifestError;
+export const selectChangePasswordStatus = (state: RootState) => state.install.changePasswordStatus;

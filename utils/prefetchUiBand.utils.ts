@@ -1,9 +1,7 @@
-import type { ConfigListItem, ConfigPrefetchStatusEntry } from "@/types/rest.types";
-import type { RoomSyncProgress } from "@/types/room.types";
 import { IN_PROGRESS_ROOM_STATUSES } from "@/constants/room.constants";
-
-/** Three UI bands from [Config page: prefetch UX]. */
-export type PrefetchUiBand = "refetchAvailable" | "inQueue" | "inProgress";
+import type { MergedConfigRow } from "@/types/configCard.types";
+import type { DerivePrefetchUiBandResult, PrefetchUiBand } from "@/types/prefetchUiBand.types";
+import type { ConfigListItem, ConfigPrefetchStatusEntry } from "@/types/rest.types";
 
 const IN_PROGRESS_ROOM_STATUS_SET = new Set<string>(IN_PROGRESS_ROOM_STATUSES);
 
@@ -12,20 +10,11 @@ type DerivePrefetchUiBandInput = {
   prefetchEntry?: ConfigPrefetchStatusEntry | null;
 };
 
-export type DerivePrefetchUiBandResult = {
-  band: PrefetchUiBand;
-  progress: RoomSyncProgress | null;
-  roomStatus: string | null;
-  queuePosition: number | null;
-  estimatedWaitMs: number | null;
-  triggeredByMe: boolean;
-};
-
 /**
  * Pure band derivation for config cards.
  * Prefers prefetch-status snapshot when present; falls back to list `roomStatus`.
  */
-export function derivePrefetchUiBand({
+function derivePrefetchUiBand({
   listItem,
   prefetchEntry,
 }: DerivePrefetchUiBandInput): DerivePrefetchUiBandResult {
@@ -56,5 +45,23 @@ export function derivePrefetchUiBand({
     queuePosition,
     estimatedWaitMs,
     triggeredByMe,
+  };
+}
+
+export function mergeConfigRow(
+  item: ConfigListItem,
+  prefetchEntry: ConfigPrefetchStatusEntry | undefined,
+): MergedConfigRow {
+  const bandFields = derivePrefetchUiBand({ listItem: item, prefetchEntry });
+
+  return {
+    item,
+    prefetchEntry,
+    bandFields,
+    nextTriggerAt: prefetchEntry?.nextTriggerAt ?? item.scheduler?.nextTriggerAt ?? null,
+    lastSyncedAt: prefetchEntry?.lastSyncedAt ?? item.lastSyncedAt ?? null,
+    lastOutcome: prefetchEntry?.room.lastOutcome ?? item.roomLastOutcome ?? null,
+    closedReason: prefetchEntry?.room.closedReason ?? null,
+    roomUpdatedAt: prefetchEntry?.room.updatedAt ?? null,
   };
 }

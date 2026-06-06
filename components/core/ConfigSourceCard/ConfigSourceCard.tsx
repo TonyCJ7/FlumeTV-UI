@@ -11,7 +11,7 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Button } from "@/components/design-system";
 import { SourceTypeBadge } from "@/components/core/SourceTypeBadge";
-import type { MergedConfigRow } from "@/store/prefetchStatus/prefetchStatusSelectors";
+import type { MergedConfigRow } from "@/types/configCard.types";
 import type {
   ConfigSourceCardLastOutcomeVariant,
   ConfigSourceCardStatusVariant,
@@ -236,7 +236,7 @@ export function ConfigSourceCard({
                         sx: { zIndex: (theme) => theme.zIndex.tooltip },
                         disablePortal: !prefersFineHover,
                       },
-                      
+
                       tooltip: {
                         sx: { maxWidth: 280 },
                       },

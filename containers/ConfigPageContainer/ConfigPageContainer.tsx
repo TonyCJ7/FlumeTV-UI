@@ -27,6 +27,7 @@ import { EditConfigDialogContainer } from "@/containers/EditConfigDialogContaine
 import { Styled } from "@/containers/ConfigPageContainer/ConfigPageContainer.styled";
 import { ACTIVE_TOGGLE_MIN_LOADING_MS } from "@/constants/config.constants";
 import { usePrefetchStatusStream } from "@/hooks/usePrefetchStatusStream";
+import { useRefreshConfigsAndPrefetch } from "@/hooks/useRefreshConfigsAndPrefetch";
 import { useStableMergedConfigRows } from "@/hooks/useStableMergedConfigRows";
 import { selectIsAuthed, selectSessionReady } from "@/store/auth/authSlice";
 import {
@@ -43,11 +44,8 @@ import {
   refetchConfigHash,
 } from "@/store/configs/configsThunks";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  selectMergedConfigRows,
-  type MergedConfigRow,
-} from "@/store/prefetchStatus/prefetchStatusSelectors";
-import { fetchPrefetchStatus } from "@/store/prefetchStatus/prefetchStatusThunks";
+import { selectMergedConfigRows } from "@/store/prefetchStatus/prefetchStatusSelectors";
+import type { MergedConfigRow } from "@/types/configCard.types";
 import { resetPrefetchStatusState } from "@/store/prefetchStatus/prefetchStatusSlice";
 import {
   openAddConfigDialog,
@@ -56,12 +54,9 @@ import {
   openLogDialog,
 } from "@/store/ui/uiSlice";
 import {
-  formatDurationMs,
-  formatIsoNice,
-  formatPrefetchTerminalStatus,
-  formatRoomClosedReason,
+  buildConfigCardFormatters,
+  buildConfigSourceCardStatusLabels,
 } from "@/utils/configCardFormat.utils";
-import type { RoomLastOutcome } from "@/types/room.types";
 import { mapConfigHashOpsApiFailure } from "@/utils/configHashOpsError.utils";
 import {
   formatActiveToggleSuccessMessage,
@@ -96,17 +91,7 @@ function ConfigSourceCardItem({
   const cardPending = useAppSelector(selectIsConfigCardMutating(row.item.hash));
   const activeTogglePending = useAppSelector(selectIsActiveTogglePending(row.item.hash));
 
-  const formatters = useMemo(
-    () => ({
-      formatIso: formatIsoNice,
-      formatDuration: formatDurationMs,
-      formatTerminal: (outcome: RoomLastOutcome | null | undefined) =>
-        formatPrefetchTerminalStatus(outcome, t),
-      formatClosedReason: (closedReason: string | null | undefined) =>
-        formatRoomClosedReason(closedReason, t),
-    }),
-    [t],
-  );
+  const formatters = useMemo(() => buildConfigCardFormatters(t), [t]);
 
   const rowLabels = useMemo(
     () => ({
@@ -122,16 +107,7 @@ function ConfigSourceCardItem({
   );
 
   const statusLabels = useMemo(
-    () => ({
-      syncing: rowLabels.syncing,
-      formatSyncingWithPercent: (percent: number) =>
-        t("ConfigCard.Label_SyncingWithPercent", { percent }),
-      labelRunning: rowLabels.labelRunning,
-      labelFetching: rowLabels.labelFetching,
-      labelInQueue: rowLabels.labelInQueue,
-      labelIdleReady: rowLabels.labelIdleReady,
-      labelLastOutcome: rowLabels.labelLastOutcome,
-    }),
+    () => buildConfigSourceCardStatusLabels(rowLabels, t),
     [rowLabels, t],
   );
 
@@ -191,9 +167,7 @@ export function ConfigPageContainer() {
   const stableRows = useStableMergedConfigRows(mergedRows);
   const [toast, setToast] = useState<ConfigPageToastState | null>(null);
 
-  const refreshListAndPrefetch = useCallback(async () => {
-    await Promise.all([dispatch(fetchConfigsList()), dispatch(fetchPrefetchStatus())]);
-  }, [dispatch]);
+  const refreshListAndPrefetch = useRefreshConfigsAndPrefetch();
 
   const showErrorToast = useCallback(
     (operation: "refetch" | "active", payload: { code: string; message: string }) => {

@@ -1,4 +1,17 @@
+import type { DerivePrefetchUiBandResult } from "@/types/prefetchUiBand.types";
+import type { ConfigListItem, ConfigPrefetchStatusEntry } from "@/types/rest.types";
 import type { RoomLastOutcome } from "@/types/room.types";
+
+export type MergedConfigRow = Readonly<{
+  item: ConfigListItem;
+  prefetchEntry: ConfigPrefetchStatusEntry | undefined;
+  bandFields: DerivePrefetchUiBandResult;
+  nextTriggerAt: string | null;
+  lastSyncedAt: string | null;
+  lastOutcome: RoomLastOutcome | null;
+  closedReason: string | null;
+  roomUpdatedAt: string | null;
+}>;
 
 export type ConfigSourceCardStatusVariant = "idle" | "queue" | "work";
 

@@ -1,5 +1,5 @@
 import styled from "@/utils/styled.utils";
-import { Box, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { layoutTokens } from "@/theme/tokens";
 
 const Field = styled(TextField)(({ theme }) => ({
@@ -33,12 +33,6 @@ const Field = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const FieldContainer = styled(Box)({
-  display: "flex",
-  flexDirection: "column",
-});
-
 export const Styled = {
   Field,
-  FieldContainer,
 } as const;

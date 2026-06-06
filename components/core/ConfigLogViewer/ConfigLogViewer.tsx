@@ -4,11 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useTranslation } from "react-i18next";
 import type { UiLogLine } from "@/types/logStream.types";
-import {
-  buildLogSectorBytesLabel,
-  isLogSectorProgressDeterminate,
-  shouldShowLogSectorProgress,
-} from "@/utils/logDisplay.utils";
+import { buildLogSectorBytesLabel, shouldShowLogSectorProgress } from "@/utils/logDisplay.utils";
 import { Styled } from "./ConfigLogViewer.styled";
 
 type ConfigLogViewerProps = Readonly<{
@@ -56,7 +52,7 @@ export function ConfigLogViewer({ lines, emptyLabel, ariaLabel }: ConfigLogViewe
       ) : (
         lines.map((line) => {
           const showProgress = shouldShowLogSectorProgress(line);
-          const determinate = isLogSectorProgressDeterminate(line);
+          const determinate = line.sectorPercent != null;
           const bytesLabel = showProgress ? formatSectorBytesLabel(line) : null;
 
           return (

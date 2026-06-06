@@ -5,7 +5,6 @@ export { FeedbackBanner } from "./FeedbackBanner";
 export { FieldPassword } from "./FieldPassword";
 export { FieldText } from "./FieldText";
 export { SegmentTabs } from "./SegmentTabs";
-export { PrimaryNavIconConfig, PrimaryNavIconInstall } from "./PrimaryNavTabs/PrimaryNavIcons";
 export { PrimaryNavTabs } from "./PrimaryNavTabs";
 export { RadioField } from "./RadioField";
 export { SkeletonBlock } from "./SkeletonBlock";

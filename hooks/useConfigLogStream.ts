@@ -9,9 +9,10 @@ import {
   buildHashLogsStreamUrl,
   parseRoomLogResetSsePayload,
   parseRoomLogSsePayload,
-  parseRoomSyncProgressFromSse,
   roomLogPayloadToUiLogLine,
 } from "@/utils/logStream.utils";
+import { parseJsonObject } from "@/utils/json.utils";
+import { parseRoomSyncProgress } from "@/utils/prefetchStatusStream.utils";
 
 type ConfigLogStreamStatus = "idle" | "connecting" | "open" | "error";
 
@@ -20,7 +21,8 @@ type ConfigLogStreamStatus = "idle" | "connecting" | "open" | "error";
  * is open; tears down on close. Native `Last-Event-ID` resume on reconnect.
  * Handles `event: log_reset` (backend Step 26) — clears the buffer when refetch
  * preempts logs while the dialog stays open on the same SSE connection.
- * Structured sector logs (backend Step 27) — `upsertLogLine` merges rows by `logKey` (highest `seq` wins).
+ * Structured sector logs (backend Step 27) — `upsertLogLine` merges rows by `logKey`
+ * (highest `seq` wins; terminal sector status beats stale `in_progress`).
  */
 export function useConfigLogStream(open: boolean, hash: string | null): ConfigLogStreamStatus {
   const dispatch = useAppDispatch();
@@ -71,8 +73,12 @@ export function useConfigLogStream(open: boolean, hash: string | null): ConfigLo
       if (!isActive()) {
         return;
       }
-      const progress = parseRoomSyncProgressFromSse(event.data);
-      if (!progress) {
+      const record = parseJsonObject(event.data);
+      if (!record) {
+        return;
+      }
+      const progress = parseRoomSyncProgress(record);
+      if (progress == null) {
         return;
       }
       dispatch(patchPrefetchEntryProgress({ hash, progress }));

@@ -5,7 +5,25 @@ import MuiDialogContent from "@mui/material/DialogContent";
 import MuiDialogTitle from "@mui/material/DialogTitle";
 import { layoutTokens } from "@/theme/tokens";
 
-const Dialog = styled(MuiDialog)({});
+const Dialog = styled(MuiDialog, {
+  shouldForwardProp: (prop) => prop !== "$fullScreen" && prop !== "$isMobile",
+})<{ $fullScreen?: boolean; $isMobile?: boolean }>(({ theme, $fullScreen, $isMobile }) => ({
+  "& .MuiDialog-paper": {
+    borderRadius: $fullScreen ? 0 : layoutTokens.radiusLg,
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: $fullScreen ? "100vh" : "90vh",
+    overflow: "hidden",
+    padding: 0,
+    width: "100%",
+    margin: $fullScreen ? 0 : theme.spacing(4),
+    maxWidth: !$isMobile ? layoutTokens.dialogWidthDefault : "100%",
+    ...(!$fullScreen && {
+      height: "auto",
+      alignSelf: "center",
+    }),
+  },
+}));
 
 const Title = styled(MuiDialogTitle)<{ $hideSeparator?: boolean }>(({ theme, $hideSeparator }) => ({
   display: "flex",
@@ -57,5 +75,4 @@ export const Styled = {
   Title,
   Body,
   Footer,
-  layoutTokens,
 } as const;

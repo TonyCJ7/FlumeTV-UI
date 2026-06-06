@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useColorMode } from "@/components/providers";
 import {
   MOON_MASK_RADIUS,
@@ -12,7 +11,7 @@ import {
 } from "./ThemeModeToggle.styled";
 
 type ThemeModeToggleProps = Readonly<{
-  "aria-label"?: string;
+  "aria-label": string;
 }>;
 
 /** Eight ray directions — degrees, SVG coords (0° = east, 90° = south). */
@@ -33,9 +32,7 @@ function sunRayEndpoints(angleDeg: number) {
 
 /** Header-style light/dark control — single sun icon morphs into moon. */
 export function ThemeModeToggle({ "aria-label": ariaLabel }: ThemeModeToggleProps) {
-  const { t } = useTranslation();
   const { mode, toggleColorMode } = useColorMode();
-  const label = ariaLabel ?? t("Common.ThemeToggle_Label");
   const maskId = useId().replace(/:/g, "");
   const sunRays = SUN_RAY_ANGLES.map((angle) => ({ angle, ...sunRayEndpoints(angle) }));
   const skipSpinRef = useRef(true);
@@ -52,7 +49,7 @@ export function ThemeModeToggle({ "aria-label": ariaLabel }: ThemeModeToggleProp
   }, [mode]);
 
   return (
-    <Styled.Toggle type="button" onClick={toggleColorMode} aria-label={label}>
+    <Styled.Toggle type="button" onClick={toggleColorMode} aria-label={ariaLabel}>
       <Styled.IconSvg
         $mode={mode}
         $spin={spinIcon}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapse, Stack } from "@mui/material";
 import { useDialogFullScreen } from "@/hooks/useLayoutMode";
@@ -17,21 +17,22 @@ import {
   ToastSnackbar,
   ToastWell,
 } from "@/components/design-system";
+import { ConfigEpgFieldset } from "@/components/core/ConfigEpgFieldset";
 import { Styled } from "@/containers/AddConfigDialogContainer/AddConfigDialogContainer.styled";
 import { REST_ERROR_CODES } from "@/constants/restError.constants";
 import { layoutTokens } from "@/theme/tokens";
 import type { PostConfigRequestBody } from "@/types/rest.types";
-import { createConfig, fetchConfigsList } from "@/store/configs/configsThunks";
+import { createConfig } from "@/store/configs/configsThunks";
+import { useRefreshConfigsAndPrefetch } from "@/hooks/useRefreshConfigsAndPrefetch";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   closeAddConfigDialog,
   selectAddConfigDialogOpen,
   selectAddConfigTab,
   setAddConfigTab,
-  type AddConfigTab,
 } from "@/store/ui/uiSlice";
-import { mapAddConfigApiFailure } from "@/utils/addConfigError.utils";
-import { formatAddConfigSuccessMessage } from "@/utils/addConfigSuccess.utils";
+import type { AddConfigTab } from "@/types/ui.types";
+import { formatAddConfigSuccessMessage, mapAddConfigApiFailure } from "@/utils/addConfig.utils";
 import { toPostConfigDirectRequestBody, toPostConfigXtreamRequestBody } from "@/utils/config.utils";
 import {
   createAddConfigDirectFormSchema,
@@ -65,19 +66,6 @@ type ToastState = Readonly<{
   severity: "success" | "error";
 }>;
 
-function EpgFieldset({
-  legend,
-  epgEnabled,
-  children,
-}: Readonly<{ legend: string; epgEnabled: boolean; children: ReactNode }>) {
-  return (
-    <Styled.EpgFieldset>
-      <Styled.EpgLegend>{legend}</Styled.EpgLegend>
-      <Stack spacing={epgEnabled ? 3 : 0}>{children}</Stack>
-    </Styled.EpgFieldset>
-  );
-}
-
 export function AddConfigDialogContainer() {
   const { t } = useTranslation();
   const isMobile = useDialogFullScreen();
@@ -87,6 +75,7 @@ export function AddConfigDialogContainer() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [providerConflictMessage, setProviderConflictMessage] = useState<string | null>(null);
+  const refreshListAndPrefetch = useRefreshConfigsAndPrefetch();
 
   const directPanelId = useId();
   const xtreamPanelId = useId();
@@ -188,7 +177,7 @@ export function AddConfigDialogContainer() {
     if (createConfig.fulfilled.match(result)) {
       dispatch(closeAddConfigDialog());
       resetForms();
-      void dispatch(fetchConfigsList());
+      refreshListAndPrefetch();
       setToast({
         message: formatAddConfigSuccessMessage(result.payload, t),
         severity: "success",
@@ -284,7 +273,10 @@ export function AddConfigDialogContainer() {
                   helperText={directForm.formState.errors.m3uUrl?.message}
                   {...directForm.register("m3uUrl")}
                 />
-                <EpgFieldset legend={t("AddConfig.Fieldset_Epg")} epgEnabled={directEpgEnabled}>
+                <ConfigEpgFieldset
+                  legend={t("AddConfig.Fieldset_Epg")}
+                  epgEnabled={directEpgEnabled}
+                >
                   <CheckField
                     label={t("AddConfig.FieldLabel_EnableEpg")}
                     checked={directEpgEnabled}
@@ -317,7 +309,7 @@ export function AddConfigDialogContainer() {
                       />
                     </Stack>
                   </Collapse>
-                </EpgFieldset>
+                </ConfigEpgFieldset>
               </Stack>
             </Styled.TabPanel>
 
@@ -356,7 +348,10 @@ export function AddConfigDialogContainer() {
                   visibilityToggleAriaLabel={passwordToggleAriaLabel}
                   {...xtreamForm.register("panelPassword")}
                 />
-                <EpgFieldset legend={t("AddConfig.Fieldset_Epg")} epgEnabled={xtreamEpgEnabled}>
+                <ConfigEpgFieldset
+                  legend={t("AddConfig.Fieldset_Epg")}
+                  epgEnabled={xtreamEpgEnabled}
+                >
                   <CheckField
                     label={t("AddConfig.FieldLabel_EnableEpg")}
                     checked={xtreamEpgEnabled}
@@ -413,7 +408,7 @@ export function AddConfigDialogContainer() {
                       />
                     </Stack>
                   </Collapse>
-                </EpgFieldset>
+                </ConfigEpgFieldset>
               </Stack>
             </Styled.TabPanel>
           </Stack>

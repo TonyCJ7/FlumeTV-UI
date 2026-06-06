@@ -217,6 +217,7 @@
     "Error_ListLoadFailed": "Could not load configurations.",
     "Error_AddConfigFailed": "Couldn't add this source. Please try again.",
     "Error_AddConfigBodyInvalid": "Check the form fields and try again.",
+    "Error_ProviderUrlNotAllowed": "Use a public http or https URL for the panel, playlist, or EPG. Private IPs, localhost, and internal addresses are blocked.",
     "Error_ConfigAlreadyExists": "A config with this provider is already linked to your account.",
     "Error_ConfigAlreadyExistsSuggestion": "Edit the existing source or use different provider credentials.",
     "Error_QueueBacklogExceeded": "The sync queue is full. Try again later.",

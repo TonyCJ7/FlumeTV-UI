@@ -27,6 +27,10 @@ export type RoomLogSsePayload = Readonly<{
   sectorPercent?: number | null;
 }>;
 
+export type KnownRoomClosedReason =
+  | Readonly<{ kind: "exact"; i18nKey: string }>
+  | Readonly<{ hint: string; kind: "worker_no_result"; i18nKey: string }>;
+
 /** Assembled from `room.sync_*` on list, prefetch-status, room SSE, and log SSE. */
 export type RoomSyncProgress = {
   /** Integer 0–100, monotonic non-decreasing within one room run. */

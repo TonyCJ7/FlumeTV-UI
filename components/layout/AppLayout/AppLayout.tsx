@@ -6,13 +6,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { ShellDonateButton } from "@/components/layout/ShellDonateButton";
-import {
-  Button,
-  PrimaryNavIconConfig,
-  PrimaryNavIconInstall,
-  PrimaryNavTabs,
-  ThemeModeToggle,
-} from "@/components/design-system";
+import { ShellNavIconList, ShellNavIconUser } from "@/components/layout/ShellNavIcons";
+import { PrimaryNavTabs, ThemeModeToggle } from "@/components/design-system";
 import { useIsMobileBreakpoint } from "@/hooks/useLayoutMode";
 import { BRAND_LOGO_SRC } from "@/constants/brand.constants";
 import { scrimTokens } from "@/theme/tokens";
@@ -56,12 +51,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       {
         id: "install",
         label: t("Shell.NavLabel_Install"),
-        icon: <PrimaryNavIconInstall />,
+        icon: <ShellNavIconUser />,
       },
       {
         id: "config",
         label: t("Shell.NavLabel_Config"),
-        icon: <PrimaryNavIconConfig />,
+        icon: <ShellNavIconList />,
       },
     ],
     [t],
@@ -171,7 +166,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             </Styled.ShellLogoutButton>
           ) : null}
 
-          <ThemeModeToggle />
+          <ThemeModeToggle aria-label={t("Common.ThemeToggle_Label")} />
         </Styled.HeaderActions>
       </Styled.Header>
 

@@ -1,15 +1,15 @@
 import type { TFunction } from "i18next";
 import { REST_ERROR_CODES } from "@/constants/restError.constants";
-import type {
-  ChangePasswordFailureInput,
-  MappedChangePasswordError,
-} from "@/types/changePasswordError.types";
-import type { RestApiErrorCode } from "@/types/restError.types";
-import { isRestApiFallbackCode } from "@/types/restError.types";
-import { mapRestFallbackCodeToMessage } from "@/utils/restError.utils";
+import type { MappedChangePasswordError } from "@/types/auth.types";
+import type { RestApiFailureInput } from "@/types/restError.types";
+import {
+  isRestApiFallbackCode,
+  parseRestApiErrorCode,
+  resolveRestFallbackMessage,
+} from "@/utils/restError.utils";
 
 export function mapChangePasswordApiFailure(
-  failure: ChangePasswordFailureInput,
+  failure: RestApiFailureInput,
   t: TFunction,
 ): MappedChangePasswordError {
   if (failure.httpStatus === 429) {
@@ -24,11 +24,18 @@ export function mapChangePasswordApiFailure(
     return {
       field: "form",
       code: failure.code,
-      message: failure.message || mapRestFallbackCodeToMessage(failure.code, t),
+      message: resolveRestFallbackMessage(failure.code, failure.message, t),
     };
   }
 
-  const code = failure.code as RestApiErrorCode;
+  const code = parseRestApiErrorCode(failure.code);
+  if (code === null) {
+    return {
+      field: "form",
+      code: failure.code,
+      message: failure.message || t("Common.State_GenericErrorHeading"),
+    };
+  }
 
   switch (code) {
     case REST_ERROR_CODES.CHANGE_PASSWORD_CURRENT_INVALID:

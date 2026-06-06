@@ -2,13 +2,14 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { expireSession } from "@/store/auth/authSlice";
 import { logoutUser } from "@/store/auth/authThunks";
 import { fetchConfigsList } from "@/store/configs/configsThunks";
+import type { RootState } from "@/store/store";
 import type { ConfigListItem } from "@/types/rest.types";
 import type { ConfigMutationScope } from "@/types/configHashOps.types";
 import type { RoomSyncProgress } from "@/types/room.types";
 
-export type ConfigsListStatus = "idle" | "loading" | "succeeded" | "failed";
+type ConfigsListStatus = "idle" | "loading" | "succeeded" | "failed";
 
-export type ConfigsState = {
+type ConfigsState = {
   items: ConfigListItem[];
   listStatus: ConfigsListStatus;
   listError: string | null;
@@ -109,14 +110,11 @@ export const {
 
 export const configsReducer = configsSlice.reducer;
 
-export const selectConfigsListStatus = (state: { configs: ConfigsState }) =>
-  state.configs.listStatus;
-export const selectConfigsListError = (state: { configs: ConfigsState }) => state.configs.listError;
-export const selectConfigByHash = (hash: string) => (state: { configs: ConfigsState }) =>
+export const selectConfigsListStatus = (state: RootState) => state.configs.listStatus;
+export const selectConfigsListError = (state: RootState) => state.configs.listError;
+export const selectConfigByHash = (hash: string) => (state: RootState) =>
   state.configs.items.find((item) => item.hash === hash);
-export const selectIsConfigMutating = (hash: string) => (state: { configs: ConfigsState }) =>
-  hash in state.configs.mutatingHashes;
-export const selectIsConfigCardMutating = (hash: string) => (state: { configs: ConfigsState }) =>
+export const selectIsConfigCardMutating = (hash: string) => (state: RootState) =>
   state.configs.mutatingHashes[hash] === "card";
-export const selectIsActiveTogglePending = (hash: string) => (state: { configs: ConfigsState }) =>
+export const selectIsActiveTogglePending = (hash: string) => (state: RootState) =>
   state.configs.mutatingHashes[hash] === "activeToggle";

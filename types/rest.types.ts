@@ -5,8 +5,6 @@
 
 import type { RoomLastOutcome, RoomSyncProgress } from "@/types/room.types";
 
-export type { RoomLastOutcome, RoomSyncProgress } from "@/types/room.types";
-
 /** Scheduler row on config list items (`GET /api/configs`). */
 export type ConfigListSchedulerSnapshot = {
   intervalMinutes: number;
@@ -185,6 +183,11 @@ export type PostLoginRequestBody = {
 };
 
 /** `POST /api/auth/change-password` */
+export type PostChangePasswordRequestBody = {
+  currentPassword: string;
+  newPassword: string;
+};
+
 export type PostChangePasswordResponseBody = {
   ok: true;
 };

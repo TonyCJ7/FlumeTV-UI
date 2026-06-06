@@ -1,0 +1,34 @@
+---
+description: Gortex code intelligence — prefer graph tools over file reads
+alwaysApply: true
+---
+
+<!-- gortex:communities:start -->
+<!-- gortex:skills:start -->
+## Community Skills
+
+| Area | Description | Skill |
+|------|-------------|-------|
+| Utils 2 Dirs | 36 symbols | `/gortex-utils-2-dirs` |
+| Addconfigdialogcontainer Addconfigdialogcontainer | 36 symbols | `/gortex-addconfigdialogcontainer-addconfigdialogcontainer` |
+| Authdialogcontainer Authdialogcontainer | 35 symbols | `/gortex-authdialogcontainer-authdialogcontainer` |
+| Editconfigdialogcontainer 1 Dirs | 34 symbols | `/gortex-editconfigdialogcontainer-1-dirs` |
+| Installpagecontainer Installpagecontainer | 31 symbols | `/gortex-installpagecontainer-installpagecontainer` |
+| Layout Applayout Applayout | 31 symbols | `/gortex-layout-applayout-applayout` |
+| Types 1 Dirs Parseroomlogssepayload | 29 symbols | `/gortex-types-1-dirs-parseroomlogssepayload` |
+| Configpagecontainer Configpagecontainer | 28 symbols | `/gortex-configpagecontainer-configpagecontainer` |
+| Utils 1 Dirs Buildconfigcarddetailrows | 27 symbols | `/gortex-utils-1-dirs-buildconfigcarddetailrows` |
+| Core Configsourcecard Configsourcecard | 26 symbols | `/gortex-core-configsourcecard-configsourcecard` |
+| Hooks 3 Dirs | 23 symbols | `/gortex-hooks-3-dirs` |
+| Providers 1 Dirs | 21 symbols | `/gortex-providers-1-dirs` |
+| Types 1 Dirs Parseprefetchstatussnapshotssep | 17 symbols | `/gortex-types-1-dirs-parseprefetchstatussnapshotssep` |
+| Types 1 Dirs Expandtypography | 16 symbols | `/gortex-types-1-dirs-expandtypography` |
+| Types 1 Dirs Buildconfigsourcecardstatusdisp | 16 symbols | `/gortex-types-1-dirs-buildconfigsourcecardstatusdisp` |
+| Configconfirmdialogcontainer | 14 symbols | `/gortex-configconfirmdialogcontainer` |
+| Utils 1 Dirs Formatqueuedactiontoast | 14 symbols | `/gortex-utils-1-dirs-formatqueuedactiontoast` |
+| Types 1 Dirs Parsejsonobject | 14 symbols | `/gortex-types-1-dirs-parsejsonobject` |
+| Configpagecontainer Configsourcecarditem | 14 symbols | `/gortex-configpagecontainer-configsourcecarditem` |
+| Types 1 Dirs Topostconfigxtreamrequestbody | 14 symbols | `/gortex-types-1-dirs-topostconfigxtreamrequestbody` |
+<!-- gortex:skills:end -->
+
+<!-- gortex:communities:end -->

@@ -13,6 +13,9 @@ export type RestApiFallbackCode =
 
 export type RestApiErrorCode = RestErrorCode | RestApiFallbackCode;
 
-export function isRestApiFallbackCode(code: string): code is RestApiFallbackCode {
-  return Object.values(REST_API_FALLBACK_CODES).includes(code as RestApiFallbackCode);
-}
+/** Normalized REST failure envelope passed into domain error mappers. */
+export type RestApiFailureInput = Readonly<{
+  code: string;
+  message: string;
+  httpStatus?: number | null;
+}>;

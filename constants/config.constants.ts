@@ -1,3 +1,6 @@
+/** Placeholder shown when a config card detail value is unavailable. */
+export const CONFIG_CARD_EMPTY_PLACEHOLDER = "—";
+
 /** Max length for `configName` on POST/PUT — matches backend `postConfig.handler.ts`. */
 export const CONFIG_DISPLAY_NAME_MAX_LEN = 200;
 

@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PREFETCH_BAND_RANK, PREFETCH_BAND_STABILIZE_MS } from "@/constants/prefetch.constants";
-import type { MergedConfigRow } from "@/store/prefetchStatus/prefetchStatusSelectors";
-import type { PrefetchUiBand } from "@/utils/prefetchUiBand.utils";
+import type { MergedConfigRow } from "@/types/configCard.types";
+import type { PrefetchUiBand } from "@/types/prefetchUiBand.types";
 
 function applyStableBand(row: MergedConfigRow, stableBand: PrefetchUiBand): MergedConfigRow {
   if (row.bandFields.band === stableBand) {

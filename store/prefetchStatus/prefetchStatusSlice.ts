@@ -5,8 +5,9 @@ import { fetchPrefetchStatus } from "@/store/prefetchStatus/prefetchStatusThunks
 import type { ConfigPrefetchStatusEntry, PrefetchGlobalQueue } from "@/types/rest.types";
 import type { PrefetchStatusHashSsePayload } from "@/types/prefetchStatusStream.types";
 import type { RoomSyncProgress } from "@/types/room.types";
+import { mergePrefetchStatusHashEntry } from "@/utils/prefetchStatusStream.utils";
 
-export type PrefetchStatusState = {
+type PrefetchStatusState = {
   byHash: Record<string, ConfigPrefetchStatusEntry>;
   globalQueue: PrefetchGlobalQueue;
 };
@@ -33,7 +34,12 @@ const prefetchStatusSlice = createSlice({
         globalQueue: PrefetchGlobalQueue;
       }>,
     ) {
-      state.byHash = action.payload.byHash;
+      const nextByHash: Record<string, ConfigPrefetchStatusEntry> = {};
+      for (const [hash, entry] of Object.entries(action.payload.byHash)) {
+        const existing = state.byHash[hash];
+        nextByHash[hash] = existing ? mergePrefetchStatusHashEntry(existing, entry) : entry;
+      }
+      state.byHash = nextByHash;
       state.globalQueue = action.payload.globalQueue;
     },
     upsertPrefetchStatusHashEntry(state, action: PayloadAction<PrefetchStatusHashSsePayload>) {
@@ -42,7 +48,8 @@ const prefetchStatusSlice = createSlice({
         delete state.byHash[hash];
         return;
       }
-      state.byHash[hash] = entry;
+      const existing = state.byHash[hash];
+      state.byHash[hash] = existing ? mergePrefetchStatusHashEntry(existing, entry) : entry;
     },
     applyPrefetchStatusGlobalQueue(state, action: PayloadAction<PrefetchGlobalQueue>) {
       state.globalQueue = action.payload;
@@ -82,7 +89,3 @@ export const {
 } = prefetchStatusSlice.actions;
 
 export const prefetchStatusReducer = prefetchStatusSlice.reducer;
-
-export const selectPrefetchEntry =
-  (hash: string) => (state: { prefetchStatus: PrefetchStatusState }) =>
-    state.prefetchStatus.byHash[hash];
