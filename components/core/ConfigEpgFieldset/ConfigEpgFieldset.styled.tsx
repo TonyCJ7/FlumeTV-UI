@@ -10,7 +10,7 @@ const EpgFieldset = styled("fieldset")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(1.5),
-}));
+}))
 
 const EpgLegend = styled("legend")(({ theme }) => ({
   margin: 0,

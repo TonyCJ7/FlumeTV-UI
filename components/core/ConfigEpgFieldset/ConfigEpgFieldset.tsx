@@ -6,7 +6,7 @@ import { Styled } from "@/components/core/ConfigEpgFieldset/ConfigEpgFieldset.st
 
 type ConfigEpgFieldsetProps = Readonly<{
   legend: string;
-  epgEnabled: boolean;
+  epgEnabled: booleann;
   children: ReactNode;
 }>;
 
