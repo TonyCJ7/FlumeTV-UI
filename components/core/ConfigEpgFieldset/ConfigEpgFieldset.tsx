@@ -1,7 +1,7 @@
 "use client";
 
-import { Stack } from "@mui/material";
 import type { ReactNode } from "react";
+import { Stack } from "@mui/material";
 import { Styled } from "@/components/core/ConfigEpgFieldset/ConfigEpgFieldset.styled";
 
 type ConfigEpgFieldsetProps = Readonly<{
