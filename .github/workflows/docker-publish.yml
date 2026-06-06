@@ -4,7 +4,7 @@
 #   Dockerfile              → latest, {version}
 #   Dockerfile.configurable → configurable-latest, configurable-{version}
 #
-# Triggers on push to main only (includes PR merges — merging creates a push to main).
+# Triggers on push to main when app or Docker build inputs change (not .github/, docs, etc.).
 #
 # Repository secrets:
 #   DOCKERHUB_USERNAME — Docker Hub user (e.g. tonycj7)
@@ -16,6 +16,29 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'containers/**'
+      - 'constants/**'
+      - 'contexts/**'
+      - 'hooks/**'
+      - 'infra/**'
+      - 'store/**'
+      - 'theme/**'
+      - 'translations/**'
+      - 'types/**'
+      - 'utils/**'
+      - 'validation/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'next.config.ts'
+      - 'tsconfig.json'
+      - 'server.js'
+      - 'Dockerfile'
+      - 'Dockerfile.configurable'
+      - '.dockerignore'
 
 concurrency:
   group: docker-publish-${{ github.ref }}
