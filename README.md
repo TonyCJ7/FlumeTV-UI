@@ -21,7 +21,7 @@
     <img src="https://img.shields.io/badge/Docker%20Hub-flumetv--ui-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub">
   </a>
   <a href="https://github.com/TonyCJ7/FlumeTV-UI/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey?style=for-the-badge" alt="License CC BY-NC 4.0">
+    <img src="https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge" alt="License Apache 2.0">
   </a>
 </p>
 
@@ -532,7 +532,7 @@ Thanks for helping improve FlumeTV. This UI is one half of the stack — pair it
   - `fix/<topic>` — bug fixes (e.g. `fix/auth-dialog-focus`)
   - `docs/<topic>` — documentation only
 2. **Keep changes modular** — one logical concern per PR. Split unrelated fixes or features so each is easy to review and revert.
-3. **Run checks before you push** — Husky runs **lint-staged** on commit (ESLint + Prettier on staged files). **Do not** use `git commit --no-verify`; fix issues instead. Before opening a PR, also run:
+3. **Run checks before you push** — Husky runs **typecheck** and **lint-staged** on commit (full-project `tsc`, then ESLint + Prettier on staged files). **Do not** use `git commit --no-verify`; fix issues instead. Before opening a PR, also run:
   ```bash
    npm run format:check && npm run lint && npm run typecheck
   ```
@@ -603,8 +603,6 @@ FlumeTV is developed and maintained for self-hosters. If you find it useful, ple
 
 ## License
 
-This project is licensed under [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
-
-You may fork, use, and modify this software for **non-commercial** purposes (for example, personal or hobby use), provided you give appropriate credit. **Commercial use is not permitted** without separate permission.
+This project is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 See [LICENSE](LICENSE) for the full legal text.

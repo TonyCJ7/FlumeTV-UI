@@ -2,7 +2,7 @@
   "name": "flumetv-ui",
   "version": "1.0.0",
   "description": "FlumeTV UI — Next.js frontend (FlumeTV-UI)",
-  "license": "CC-BY-NC-4.0",
+  "license": "Apache-2.0",
   "homepage": "https://github.com/TonyCJ7/FlumeTV-UI",
   "repository": {
     "type": "git",

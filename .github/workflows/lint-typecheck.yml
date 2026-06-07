@@ -1,4 +1,4 @@
-# Typecheck and lint-staged (same checks as .husky/pre-commit, plus full-project types).
+# Typecheck and lint-staged (same checks as .husky/pre-commit).
 #
 # Runs on every pull request (any base branch).
 
