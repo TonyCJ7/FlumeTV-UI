@@ -1,7 +1,8 @@
 # Default image — multi-stage standalone build (~190 MB).
 # Override PORT and BASE_API_URL at container runtime (restart to apply).
 
-FROM node:20-alpine AS builder
+# Build on the host arch (fast on GHA); runner stage still emits multi-arch images.
+FROM --platform=$BUILDPLATFORM node:20-alpine AS builder
 
 WORKDIR /app
 
