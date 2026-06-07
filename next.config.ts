@@ -5,8 +5,5 @@ const config: NextConfig = {
   compiler: {
     emotion: true,
   },
-  env: {
-    BASE_API_URL: process.env.BASE_API_URL,
-  },
 };
 export default config;

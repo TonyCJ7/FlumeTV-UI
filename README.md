@@ -58,7 +58,7 @@
 
 FlumeTV UI is the **official frontend** for **[FlumeTV](https://github.com/TonyCJ7/FlumeTV-API)** — a self-hostable **Stremio IPTV addon**. It talks to the sibling **[FlumeTV API](https://github.com/TonyCJ7/FlumeTV-API)** over REST and Server-Sent Events (SSE) using session cookies (`credentials: "include"`). By default the **UI** is at **port 7000** and the **API** at **port 7001**. Optionally, **nginx** can expose both on **one host and port** — see [Optional: single host/port (nginx)](#-optional-single-hostport-nginx).
 
-**Docker images:** [`tonycj7/flumetv-ui:latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~190 MB, fast, default) and [`tonycj7/flumetv-ui:configurable-latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~1.1 GB, full env overrides) on Docker Hub. Version-pinned tags: `1.0.0`, `configurable-1.0.0`.
+**Docker image:** [`tonycj7/flumetv-ui:latest`](https://hub.docker.com/r/tonycj7/flumetv-ui) (~190 MB) on Docker Hub. Version-pinned tag: `1.0.0`. Override `PORT` and `BASE_API_URL` at container runtime (restart to apply).
 
 > [!IMPORTANT]
 > **FlumeTV is a two-service stack.** This UI does not run standalone — you need the API (and PostgreSQL) running alongside it. Backend setup, REST routes, Stremio addon behavior, and the full server env catalog are documented in the **[FlumeTV API README](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md)**.
@@ -119,7 +119,7 @@ ADDON_SECRET_KEY=change_this_to_a_long_random_secret_for_addon_tokens
 Use long random strings for the two secrets. With default ports (**UI 7000**, **API 7001**), no other variables are required. Override `**FRONTEND_ORIGIN`** or port mappings only when users reach the stack at a non-default URL — see [Environment variables](#-environment-variables).
 
 > [!NOTE]
-> The default `**tonycj7/flumetv-ui:latest**` image bakes `**BASE_API_URL=http://localhost:7001**` at build time. That matches the compose setup above. If the browser must reach the API at a different origin, use the **[configurable image](#-docker-images)** instead.
+> The default `**tonycj7/flumetv-ui:latest**` image defaults to `**BASE_API_URL=http://localhost:7001**`, which matches the compose setup above. Set `**BASE_API_URL**` in `.env` and restart the UI container when the browser must reach the API at a different origin — see [Environment variables](#-environment-variables).
 
 ### 2. Save `docker-compose.yml` and start
 
@@ -209,7 +209,7 @@ networks:
 ```
 
 > [!NOTE]
-> To build the UI image locally instead of pulling from Docker Hub, replace the `frontend` service `image` line with `build: { context: ., dockerfile: Dockerfile }` and run `docker compose up -d --build`. Use `**Dockerfile.configurable**` and set `**BASE_API_URL**` in `.env` when the browser reaches the API at a non-default origin — see [Docker images](#-docker-images).
+> To build the UI image locally instead of pulling from Docker Hub, replace the `frontend` service `image` line with `build: { context: ., dockerfile: Dockerfile }` and run `docker compose up -d --build`. Set `**BASE_API_URL**` in `.env` when the browser reaches the API at a non-default origin — see [Environment variables](#-environment-variables).
 
 Backend-only compose (API + Postgres without UI) lives in the **[FlumeTV-API README](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-getting-started)**.
 
@@ -230,7 +230,7 @@ Use this when you want **one browser URL** for the panel, REST API, and Stremio 
 Same-origin routing simplifies session cookies and CORS. Stremio still calls `/addon/...` on the same host as your manifest URL.
 
 > [!IMPORTANT]
-> This mode requires the **[configurable UI image](#-docker-images)** (`tonycj7/flumetv-ui:configurable-latest`). The default `**latest`** image bakes `**BASE_API_URL=http://localhost:7001**` and cannot point API calls at the nginx port.
+> Set `**BASE_API_URL**` to `**PUBLIC_URL**` on the `frontend` service so browser API calls go through nginx (same origin), not directly to port 7001.
 
 ### 1. Extend `.env`
 
@@ -297,7 +297,7 @@ services:
       - flumetv-network
 
   frontend:
-    image: tonycj7/flumetv-ui:configurable-latest
+    image: tonycj7/flumetv-ui:latest
     container_name: flumetv-ui
     restart: unless-stopped
     depends_on:
@@ -353,37 +353,29 @@ docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
 | ------- | --- |
 | **UI + API + addon** | **`PUBLIC_URL`** (default **http://localhost:7000**) |
 
-API and UI are **not** published on separate host ports — only nginx is exposed. First UI start may take ~30–60s while the configurable image builds.
+API and UI are **not** published on separate host ports — only nginx is exposed.
 
 > [!TIP]
 > For an external reverse proxy (Caddy, Traefik, Cloudflare) in front of this stack, keep **`TRUST_PROXY=1`** and **`BASE_URL`** on the API aligned with **`PUBLIC_URL`**. See **[FlumeTV API — Environment variables](https://github.com/TonyCJ7/FlumeTV-API/blob/main/README.md#-environment-variables)**.
 
 ---
 
-## 🐳 Docker images
+## 🐳 Docker image
 
-Two published image variants; each has a **floating** tag and a **version-pinned** tag (matches `[package.json](package.json)` `version`, currently **1.0.0**):
+Published as `tonycj7/flumetv-ui` with a **floating** tag and a **version-pinned** tag (matches `[package.json](package.json)` `version`, currently **1.0.0**):
 
+| Tag | Example | Size | Runtime env |
+| --- | ------- | ---- | ----------- |
+| Floating | `tonycj7/flumetv-ui:latest` | ~190 MB | `**PORT**`, `**BASE_API_URL**` |
+| Version-pinned | `tonycj7/flumetv-ui:1.0.0` | ~190 MB | Same |
 
-| Variant            | Floating tag                      | Version-pinned tag                      | Size    | Start time                | Runtime env                    |
-| ------------------ | --------------------------------- | --------------------------------------- | ------- | ------------------------- | ------------------------------ |
-| **Fast (default)** | `tonycj7/flumetv-ui:latest`       | `tonycj7/flumetv-ui:1.0.0`              | ~190 MB | Immediate                 | `**PORT`** only                |
-| **Configurable**   | `tonycj7/flumetv-ui:configurable-latest` | `tonycj7/flumetv-ui:configurable-1.0.0` | ~1.1 GB | ~30–60s (builds on start) | `**PORT`**, `**BASE_API_URL**` |
+Multi-stage build with Next.js standalone output. Defaults: `**PORT=7000**`, `**BASE_API_URL=http://localhost:7001**`. Change env in `.env` or compose and **restart** the UI container — no image rebuild.
 
-
-Pin a compose file to a release with e.g. `image: tonycj7/flumetv-ui:1.0.0` or `tonycj7/flumetv-ui:configurable-1.0.0`. Use `**latest**` / `**configurable-latest**` to track the newest build of each variant.
-
-**Fast (`latest`, `1.0.0`)** — multi-stage build with Next.js standalone output. `**BASE_API_URL` is always `http://localhost:7001`** (baked at image build time). Use this for the standard localhost stack or when API and UI share the default ports.
-
-**Configurable (`configurable-latest`, `configurable-1.0.0`)** — single-stage image with full `node_modules`. The container runs `npm run build && npm start` on each start, so you can change `**BASE_API_URL`** (and `**PORT**`) in `.env` and restart — no image rebuild.
-
-### Compose: configurable image
-
-Replace the `frontend` service `image` line:
+### Compose: override `BASE_API_URL`
 
 ```yaml
   frontend:
-    image: tonycj7/flumetv-ui:configurable-latest
+    image: tonycj7/flumetv-ui:latest
     env_file:
       - .env
     environment:
@@ -404,10 +396,7 @@ docker compose pull
 docker compose up -d
 ```
 
-No `.env` is required when the API is at `**http://localhost:7001**` (the default `**latest**` image). Copy `[.env.example](.env.example)` to `.env` only to override `**PORT**`.
-
-> [!NOTE]
-> The default `**latest**` image cannot override `**BASE_API_URL**` at runtime — it is always `**http://localhost:7001**`. Use `**tonycj7/flumetv-ui:configurable-latest**` when the browser reaches the API at a different origin; see [Docker images](#-docker-images).
+No `.env` is required when the API is at `**http://localhost:7001**`. Copy `[.env.example](.env.example)` to `.env` to override `**PORT**` or `**BASE_API_URL**`, then restart the UI container.
 
 App: **[http://localhost:7000](http://localhost:7000)**. Ensure the API sets `**FRONTEND_ORIGIN`** to match how users open this UI when not using the default `**http://localhost:7000**`.
 
@@ -432,13 +421,7 @@ App: **[http://localhost:7000](http://localhost:7000)**. Change `**BASE_API_URL`
 
 ## 🔑 Environment variables
 
-Docker defaults for the **[API image](https://hub.docker.com/r/tonycj7/flumetv-api)** are `PORT` **7001** and `FRONTEND_ORIGIN` `**http://localhost:7000`**. UI behavior depends on which image you run — see [Docker images](#-docker-images).
-
-
-| UI image                     | `PORT`                                 | `BASE_API_URL`                          |
-| ---------------------------- | -------------------------------------- | --------------------------------------- |
-| `**latest**` (fast, default) | Override at runtime (default **7000**) | Fixed `**http://localhost:7001`**       |
-| `**configurable-latest**`    | Override at runtime (default **7000**) | Override via `.env` + container restart |
+Docker defaults for the **[API image](https://hub.docker.com/r/tonycj7/flumetv-api)** are `PORT` **7001** and `FRONTEND_ORIGIN` `**http://localhost:7000`**. The UI image (`**tonycj7/flumetv-ui:latest**`) accepts runtime overrides for both `**PORT**` and `**BASE_API_URL**` (restart to apply).
 
 
 ### Full stack (minimum)
@@ -455,14 +438,11 @@ For the **full list** of environment variables (HTTP, CORS, prefetch tuning, pro
 ### UI overrides (optional)
 
 
-| Variable       | Default                 | `latest` image                          | `configurable-latest` image                                                       |
-| -------------- | ----------------------- | --------------------------------------- | --------------------------------------------------------------------------------- |
-| `PORT`         | `7000`                  | Set when UI listens on a different port | Same                                                                              |
-| `BASE_API_URL` | `http://localhost:7001` | **Fixed** — cannot change at runtime    | Set when browser reaches API at a different origin; change `.env` and **restart** |
-| `DEBUG_MODE`   | off                     | Reserved                                | Reserved                                                                          |
-
-
-On the `**configurable-latest`** image, `BASE_API_URL` is inlined during the container’s `npm run build`. Change `.env` and **restart** the UI container to apply a new value.
+| Variable       | Default                 | Description                                                                 |
+| -------------- | ----------------------- | --------------------------------------------------------------------------- |
+| `PORT`         | `7000`                  | UI listen port inside the container                                         |
+| `BASE_API_URL` | `http://localhost:7001` | Browser-facing API origin; change `.env` and **restart** the UI container   |
+| `DEBUG_MODE`   | off                     | Reserved                                                                    |
 
 ### API overrides the UI cares about
 
@@ -575,7 +555,7 @@ Include:
 3. **Environment**
   - **Node.js version** (for local dev — e.g. `node -v`; requires **≥ 20.9**)
   - **Hosting method** — Docker Compose, bare metal, serverless, or other
-  - **UI image** (if Docker) — `latest` vs `configurable-latest`, and relevant env (`BASE_API_URL`, `FRONTEND_ORIGIN`)
+  - **UI image** (if Docker) — `latest` or version pin, and relevant env (`BASE_API_URL`, `FRONTEND_ORIGIN`)
 4. **Source details** (for sync/config/catalog issues)
   - **Provider type** — direct M3U, Xtream JSON API, or Xtream M3U
   - **Sample data** — sanitized playlist URL, or approximate **line/channel count** (never post passwords, tokens, or full credentials)

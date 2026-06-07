@@ -1,6 +1,6 @@
 # FlumeTV UI — frontend reference
 
-**Last updated:** 2026-05-30
+**Last updated:** 2026-06-07
 
 Authoritative context for the **FlumeTV-UI** repository: what the Next.js app does, how modules fit together, and how it integrates with **FlumeTV-API**. For quick start and scripts, see [README.md](../README.md). Server architecture and SSE wire formats: sibling [FlumeTV-API/docs/backend-reference.md](../../FlumeTV-API/docs/backend-reference.md). Full REST `code` catalog: [api-error-codes.md](../../FlumeTV-API/docs/api-error-codes.md).
 
@@ -53,7 +53,7 @@ flowchart TB
 | **`components/design-system/`** | Domain-neutral primitives (Button, DialogShell, fields) | Product copy, API types    |
 | **`components/core/`**          | Product widgets (config cards, log viewer, badges)      | Redux                      |
 | **`components/layout/`**        | App shell, donate, page chrome                          | —                          |
-| **`components/providers/`**     | Redux, i18n, theme, session bootstrap                   | —                          |
+| **`components/providers/`**     | API config, Redux, i18n, theme, session bootstrap       | —                          |
 | **`store/`**                    | Slices, thunks, selectors                               | Reusable DTO shapes        |
 | **`types/`**                    | `*.types.ts` only                                       | `const`, Zod, functions    |
 | **`constants/`**                | Runtime consts                                          | Types                      |
@@ -298,26 +298,27 @@ Backend exposes **`GET /api/hashes/:hash/room/events`** (`status`, `progress`, `
 
 ## Environment variables
 
-| Variable       | Required             | Used by                                                 |
-| -------------- | -------------------- | ------------------------------------------------------- |
-| `PORT`         | No                   | `server.js` — production listen port (default **7000**) |
-| `BASE_API_URL` | Yes for API features | `infra/env.ts` → `getBaseApiUrl()` → axios + SSE URLs   |
-| `DEBUG_MODE`   | No                   | **Not wired** — reserved in `.env.example`              |
+| Variable       | Required             | Used by                                                                                                                               |
+| -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `PORT`         | No                   | `server.js` — production listen port (default **7000**)                                                                               |
+| `BASE_API_URL` | Yes for API features | Server: `parseBaseApiUrl(process.env.BASE_API_URL)` in `app/layout.tsx` → `ApiConfigProvider` → axios + `useBaseApiUrl()` (SSE hooks) |
+| `DEBUG_MODE`   | No                   | **Not wired** — reserved in `.env.example`                                                                                            |
 
 **Local dev:** copy `.env.example` → `.env.local`. **`PORT`** applies to Docker / `npm start` only; `npm run dev` uses port **7000** via the script.
 
-**Docker — two images:**
+**Docker — published image:**
 
-| Tag                                          | Dockerfile                                                    | Size    | Runtime env                                                                                  |
-| -------------------------------------------- | ------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------- |
-| **`latest`**, **`1.0.0`**                    | `Dockerfile` — multi-stage standalone, pre-built              | ~190 MB | **`PORT`** only; **`BASE_API_URL`** fixed at **`http://localhost:7001`**                     |
-| **`configurable`**, **`1.0.0-configurable`** | `Dockerfile.configurable` — single-stage, full `node_modules` | ~1.1 GB | **`PORT`**, **`BASE_API_URL`** via `.env` + container restart (in-container `npm run build`) |
+| Tag                       | Dockerfile                                       | Size    | Runtime env                                                                      |
+| ------------------------- | ------------------------------------------------ | ------- | -------------------------------------------------------------------------------- |
+| **`latest`**, **`1.0.0`** | `Dockerfile` — multi-stage standalone, pre-built | ~190 MB | **`PORT`**, **`BASE_API_URL`** (default **`http://localhost:7001`**); restart UI |
 
-Version pins match **`package.json`** `version`. Floating tags (`latest`, `configurable`) track the newest build of each variant.
+Version pins match **`package.json`** `version`. **`latest`** tracks the newest build.
+
+`BASE_API_URL` is read at **request time** on the server (`parseBaseApiUrl` in root layout) and injected into the client via **`ApiConfigProvider`** — not inlined at image build.
 
 Set **`FRONTEND_ORIGIN`** on FlumeTV-API to the browser URL of this UI (CORS + session cookies).
 
-**Production (non-Docker):** run `npm run build` with `BASE_API_URL` set in the environment, then `npm start`.
+**Production (non-Docker):** run `npm run build`, then `npm start` with **`BASE_API_URL`** (and optional **`PORT`**) in the environment.
 
 ---
 

@@ -1,5 +1,4 @@
 import axios, { type AxiosInstance } from "axios";
-import { getBaseApiUrl } from "@/infra/env";
 import { toRestApiError } from "@/utils/restError.utils";
 
 /** Default timeout for list/manifest and typical JSON routes. */
@@ -17,10 +16,8 @@ export function registerApiClientUnauthorizedHandler(handler: UnauthorizedHandle
 }
 
 function createApiClient(): AxiosInstance {
-  const baseURL = getBaseApiUrl();
-
   const client = axios.create({
-    baseURL: baseURL || undefined,
+    baseURL: undefined,
     withCredentials: true,
     timeout: API_CLIENT_TIMEOUT_MS,
     maxBodyLength: API_CLIENT_MAX_BODY_BYTES,
@@ -46,5 +43,9 @@ function createApiClient(): AxiosInstance {
   return client;
 }
 
-/** Shared axios instance — `baseURL` from `BASE_API_URL`, session cookies included. */
+/** Shared axios instance — `baseURL` set by `ApiConfigProvider`, session cookies included. */
 export const apiClient = createApiClient();
+
+export function configureApiClientBaseUrl(baseURL: string): void {
+  apiClient.defaults.baseURL = baseURL || undefined;
+}

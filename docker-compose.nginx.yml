@@ -3,7 +3,7 @@
 #   cp /path/to/FlumeTV-UI/docker/nginx/nginx.conf ./nginx.conf
 #   docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
 #
-# Requires tonycj7/flumetv-ui:configurable-latest and PUBLIC_URL in .env — see README.
+# Requires PUBLIC_URL in .env when the browser reaches the API via nginx — see README.
 
 services:
   api:
@@ -14,7 +14,7 @@ services:
       FRONTEND_ORIGIN: ${PUBLIC_URL:-http://localhost:7000}
 
   frontend:
-    image: tonycj7/flumetv-ui:configurable-latest
+    image: tonycj7/flumetv-ui:latest
     ports: !reset []
     env_file:
       - .env

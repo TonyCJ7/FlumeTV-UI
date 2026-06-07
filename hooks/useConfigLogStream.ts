@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useBaseApiUrl } from "@/components/providers";
 import { patchConfigItemProgress } from "@/store/configs/configsSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { patchPrefetchEntryProgress } from "@/store/prefetchStatus/prefetchStatusSlice";
 import { upsertLogLine, clearLogLines } from "@/store/ui/uiSlice";
 import {
-  buildHashLogsStreamUrl,
   parseRoomLogResetSsePayload,
   parseRoomLogSsePayload,
   roomLogPayloadToUiLogLine,
@@ -25,6 +25,7 @@ type ConfigLogStreamStatus = "idle" | "connecting" | "open" | "error";
  * (highest `seq` wins; terminal sector status beats stale `in_progress`).
  */
 export function useConfigLogStream(open: boolean, hash: string | null): ConfigLogStreamStatus {
+  const baseApiUrl = useBaseApiUrl();
   const dispatch = useAppDispatch();
   const connectionGenRef = useRef(0);
   const [status, setStatus] = useState<ConfigLogStreamStatus>("idle");
@@ -41,7 +42,8 @@ export function useConfigLogStream(open: boolean, hash: string | null): ConfigLo
       }
     });
 
-    const url = buildHashLogsStreamUrl(hash);
+    const path = `/api/hashes/${encodeURIComponent(hash)}/logs/stream`;
+    const url = baseApiUrl ? `${baseApiUrl}${path}` : path;
     // Cross-origin SSE (e.g. :7000 → :7001) must opt in to cookies — default is false.
     const eventSource = new EventSource(url, { withCredentials: true });
 
@@ -110,7 +112,7 @@ export function useConfigLogStream(open: boolean, hash: string | null): ConfigLo
       eventSource.removeEventListener("progress", onProgress);
       eventSource.close();
     };
-  }, [dispatch, hash, open]);
+  }, [baseApiUrl, dispatch, hash, open]);
 
   return !open || !hash ? "idle" : status;
 }

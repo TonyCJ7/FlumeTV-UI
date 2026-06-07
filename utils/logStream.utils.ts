@@ -4,7 +4,6 @@ import {
   ROOM_LOG_SECTOR_STATUSES,
   ROOM_LOG_TONES,
 } from "@/constants/logStream.constants";
-import { getBaseApiUrl } from "@/infra/env";
 import type { RoomLogResetSsePayload } from "@/types/logStream.types";
 import type { UiLogLine } from "@/types/logStream.types";
 import type {
@@ -15,16 +14,6 @@ import type {
 } from "@/types/room.types";
 import { nowIso } from "@/utils/dateTime.utils";
 import { parseJsonObject } from "@/utils/json.utils";
-
-export function buildHashLogsStreamUrl(hash: string): string {
-  const encoded = encodeURIComponent(hash);
-  const path = `/api/hashes/${encoded}/logs/stream`;
-  const base = getBaseApiUrl();
-  if (!base) {
-    return path;
-  }
-  return `${base}${path}`;
-}
 
 export function parseRoomLogResetSsePayload(raw: string): RoomLogResetSsePayload | null {
   const record = parseJsonObject(raw);

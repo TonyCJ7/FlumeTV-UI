@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useBaseApiUrl } from "@/components/providers";
 import { useAppDispatch } from "@/store/hooks";
 import {
   applyPrefetchStatusGlobalQueue,
@@ -8,7 +9,6 @@ import {
   upsertPrefetchStatusHashEntry,
 } from "@/store/prefetchStatus/prefetchStatusSlice";
 import {
-  buildConfigsPrefetchStatusStreamUrl,
   parsePrefetchStatusGlobalQueueSsePayload,
   parsePrefetchStatusHashSsePayload,
   parsePrefetchStatusSnapshotSsePayload,
@@ -21,6 +21,7 @@ import {
  * Tears down on unmount (route leave).
  */
 export function usePrefetchStatusStream(enabled: boolean): void {
+  const baseApiUrl = useBaseApiUrl();
   const dispatch = useAppDispatch();
   const connectionGenRef = useRef(0);
 
@@ -30,7 +31,8 @@ export function usePrefetchStatusStream(enabled: boolean): void {
     }
 
     const gen = ++connectionGenRef.current;
-    const url = buildConfigsPrefetchStatusStreamUrl();
+    const path = "/api/configs/prefetch-status/stream";
+    const url = baseApiUrl ? `${baseApiUrl}${path}` : path;
     const eventSource = new EventSource(url, { withCredentials: true });
 
     const isActive = (): boolean => connectionGenRef.current === gen;
@@ -78,5 +80,5 @@ export function usePrefetchStatusStream(enabled: boolean): void {
       eventSource.removeEventListener("global_queue", onGlobalQueue);
       eventSource.close();
     };
-  }, [dispatch, enabled]);
+  }, [baseApiUrl, dispatch, enabled]);
 }

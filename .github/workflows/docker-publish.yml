@@ -1,8 +1,7 @@
 # Builds and pushes tonycj7/flumetv-ui images to Docker Hub.
 #
 # Tags (from package.json "version", e.g. 1.0.0):
-#   Dockerfile              → latest, {version}
-#   Dockerfile.configurable → configurable-latest, configurable-{version}
+#   Dockerfile → latest, {version}
 #
 # Triggers on push to main when app or Docker build inputs change (not docs, etc.).
 #
@@ -17,29 +16,28 @@ on:
     branches:
       - main
     paths:
-      - 'app/**'
-      - 'components/**'
-      - 'containers/**'
-      - 'constants/**'
-      - 'contexts/**'
-      - 'hooks/**'
-      - 'infra/**'
-      - 'store/**'
-      - 'theme/**'
-      - 'translations/**'
-      - 'types/**'
-      - 'utils/**'
-      - 'validation/**'
-      - 'public/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'next.config.ts'
-      - 'tsconfig.json'
-      - 'server.js'
-      - 'Dockerfile'
-      - 'Dockerfile.configurable'
-      - '.dockerignore'
-      - '.github/workflows/docker-publish.yml'
+      - "app/**"
+      - "components/**"
+      - "containers/**"
+      - "constants/**"
+      - "contexts/**"
+      - "hooks/**"
+      - "infra/**"
+      - "store/**"
+      - "theme/**"
+      - "translations/**"
+      - "types/**"
+      - "utils/**"
+      - "validation/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "next.config.ts"
+      - "tsconfig.json"
+      - "server.js"
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/docker-publish.yml"
 
 concurrency:
   group: docker-publish-${{ github.ref }}
@@ -72,7 +70,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push default image (Dockerfile)
+      - name: Build and push image (Dockerfile)
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -82,18 +80,5 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ steps.pkg.outputs.version }}
-          cache-from: type=gha,scope=flumetv-ui-default
-          cache-to: type=gha,mode=max,scope=flumetv-ui-default
-
-      - name: Build and push configurable image (Dockerfile.configurable)
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile.configurable
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.IMAGE }}:configurable-latest
-            ${{ env.IMAGE }}:configurable-${{ steps.pkg.outputs.version }}
-          cache-from: type=gha,scope=flumetv-ui-configurable
-          cache-to: type=gha,mode=max,scope=flumetv-ui-configurable
+          cache-from: type=gha,scope=flumetv-ui
+          cache-to: type=gha,mode=max,scope=flumetv-ui

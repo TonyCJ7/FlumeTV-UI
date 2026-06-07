@@ -1,4 +1,3 @@
-import { getBaseApiUrl } from "@/infra/env";
 import type {
   ConfigPrefetchStatusEntry,
   GetConfigsPrefetchStatusResponseBody,
@@ -14,15 +13,6 @@ import type {
 import type { RoomLastOutcome, RoomSyncProgress } from "@/types/room.types";
 import type { JsonObject } from "@/types/json.types";
 import { isJsonObject, parseJsonObject } from "@/utils/json.utils";
-
-export function buildConfigsPrefetchStatusStreamUrl(): string {
-  const path = "/api/configs/prefetch-status/stream";
-  const base = getBaseApiUrl();
-  if (!base) {
-    return path;
-  }
-  return `${base}${path}`;
-}
 
 export function parseRoomSyncProgress(value: unknown): RoomSyncProgress | null {
   if (value === null || value === undefined) {

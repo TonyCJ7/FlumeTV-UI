@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import {
+  ApiConfigProvider,
   AuthShellProvider,
   I18nProvider,
   ReduxProvider,
   ThemeProviders,
 } from "@/components/providers";
 import { COLOR_MODE_BOOTSTRAP_SCRIPT } from "@/infra/colorMode/bootstrapScript";
+import { parseBaseApiUrl } from "@/infra/env";
 import { getServerColorMode } from "@/infra/colorMode/getServerColorMode";
 import { getSlateTokenSet } from "@/theme/tokens";
 
@@ -30,6 +32,7 @@ type RootLayoutProps = Readonly<{
 }>;
 
 export default async function RootLayout({ children }: RootLayoutProps) {
+  const baseApiUrl = parseBaseApiUrl(process.env.BASE_API_URL);
   const initialColorMode = await getServerColorMode();
   const pageBackground = getSlateTokenSet(initialColorMode).bg;
 
@@ -51,17 +54,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       </head>
       <body suppressHydrationWarning style={{ backgroundColor: pageBackground, minHeight: "100%" }}>
         {/*
-          Provider order: Theme (MUI + color mode) → Redux → i18n.
-          Redux sits inside ThemeProviders so selectors/components can use MUI theme;
-          i18n stays innermost for translated copy in the client tree.
+          Provider order: API config → Theme (MUI + color mode) → Redux → i18n.
+          ApiConfigProvider must wrap Redux so thunks see `BASE_API_URL` before bootstrap.
         */}
-        <ThemeProviders initialColorMode={initialColorMode}>
-          <ReduxProvider>
-            <AuthShellProvider>
-              <I18nProvider>{children}</I18nProvider>
-            </AuthShellProvider>
-          </ReduxProvider>
-        </ThemeProviders>
+        <ApiConfigProvider baseApiUrl={baseApiUrl}>
+          <ThemeProviders initialColorMode={initialColorMode}>
+            <ReduxProvider>
+              <AuthShellProvider>
+                <I18nProvider>{children}</I18nProvider>
+              </AuthShellProvider>
+            </ReduxProvider>
+          </ThemeProviders>
+        </ApiConfigProvider>
       </body>
     </html>
   );
